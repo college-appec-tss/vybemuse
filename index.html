@@ -4,30 +4,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#100d1b">
+  <meta name="theme-color" content="#17152b">
 
   <title>Vybemuse – Discover African Music, Artists & Videos</title>
-  <meta name="description" content="Discover Rwandan and African music, explore artists and genres, search songs on popular platforms, and retrieve information about media you are authorized to download.">
+  <meta name="description" content="Discover Rwandan and African music, explore artists and genres, search popular music platforms and retrieve information about media you are authorized to download.">
   <meta name="robots" content="index,follow,max-image-preview:large">
-  <meta name="keywords" content="Vybemuse, African music, Rwandan music, music discovery, Afrobeats, Amapiano, Rwandan artists, music search">
+  <meta name="keywords" content="Vybemuse, African music, Rwandan music, music discovery, Afrobeats, Amapiano, Rwandan artists">
 
   <link rel="canonical" href="https://vybemuse.onrender.com/">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Vybemuse">
   <meta property="og:title" content="Vybemuse – Discover Your Sound">
-  <meta property="og:description" content="Discover African music, explore Rwandan artists and search across popular music platforms.">
+  <meta property="og:description" content="Discover African music, explore Rwandan artists and find your next favourite sound.">
   <meta property="og:url" content="https://vybemuse.onrender.com/">
   <meta property="og:image" content="https://vybemuse.onrender.com/og-cover.svg">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Vybemuse – Discover Your Sound">
-  <meta name="twitter:description" content="Explore African music, artists, genres and new sounds.">
+  <meta name="twitter:description" content="Explore African music, artists and new sounds.">
   <meta name="twitter:image" content="https://vybemuse.onrender.com/og-cover.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <script type="application/ld+json">
   {
@@ -42,16 +42,19 @@
 
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #100d1b;
-      --panel: #191528;
-      --panel2: #211b33;
-      --text: #fff;
-      --muted: #aaa3bb;
-      --purple: #a78bfa;
-      --pink: #f472b6;
-      --line: #ffffff19;
-      --max: 1100px;
+      --background: #f7f7fc;
+      --surface: #ffffff;
+      --surface-soft: #f0edff;
+      --ink: #19172d;
+      --muted: #77758b;
+      --purple: #7252e8;
+      --purple-dark: #5636ca;
+      --pink: #ed65a6;
+      --border: #e9e7f1;
+      --success: #16875d;
+      --shadow: 0 15px 45px rgba(35, 25, 75, .08);
+      --radius: 20px;
+      --max: 1120px;
     }
 
     * {
@@ -60,16 +63,27 @@
 
     html {
       scroll-behavior: smooth;
+      scroll-padding-top: 90px;
     }
 
     body {
       margin: 0;
-      background:
-        radial-gradient(ellipse at 50% -15%, #55318a55, transparent 42%),
-        var(--bg);
-      color: var(--text);
-      font-family: "DM Sans", Arial, sans-serif;
+      background: var(--background);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
       line-height: 1.6;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      cursor: pointer;
     }
 
     a {
@@ -77,176 +91,216 @@
       text-decoration: none;
     }
 
-    button, input, select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .wrap {
-      width: min(var(--max), calc(100% - 36px));
+    .container {
+      width: min(var(--max), calc(100% - 40px));
       margin: auto;
     }
 
-    header {
+    /* NAVIGATION */
+
+    .header {
       position: sticky;
       top: 0;
-      z-index: 20;
-      background: #100d1bed;
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--line);
+      z-index: 100;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
     }
 
     .nav {
-      min-height: 72px;
+      min-height: 76px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 20px;
+      gap: 25px;
     }
 
     .logo {
-      font: 700 25px "Space Grotesk", sans-serif;
-      letter-spacing: -1.4px;
+      font: 700 27px "Space Grotesk", sans-serif;
+      letter-spacing: -1.6px;
+      color: var(--ink);
+      white-space: nowrap;
     }
 
     .logo span {
       color: var(--purple);
     }
 
-    nav {
+    .nav-links {
       display: flex;
-      gap: 25px;
-      color: #d3cde0;
+      align-items: center;
+      gap: 28px;
       font-size: 14px;
+      font-weight: 600;
+      color: #625f75;
     }
 
-    nav a:hover {
-      color: var(--pink);
+    .nav-links a:hover {
+      color: var(--purple);
     }
+
+    /* BUTTONS */
 
     .btn {
       display: inline-flex;
-      justify-content: center;
       align-items: center;
-      gap: 8px;
-      padding: 13px 19px;
-      border: 0;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 20px;
+      border: none;
       border-radius: 12px;
-      background: linear-gradient(110deg, #8159ed, #d64d9e);
+      background: var(--purple);
       color: white;
       font-weight: 700;
-      transition: opacity .2s, transform .2s;
+      transition: .2s ease;
     }
 
     .btn:hover {
-      transform: translateY(-1px);
+      background: var(--purple-dark);
+      transform: translateY(-2px);
     }
 
     .btn:disabled {
-      opacity: .55;
+      opacity: .5;
       cursor: not-allowed;
       transform: none;
     }
 
-    .btn.secondary {
-      background: #302742;
-      border: 1px solid var(--line);
+    .btn-light {
+      background: white;
+      color: var(--purple);
+      border: 1px solid var(--border);
     }
 
+    .btn-light:hover {
+      background: var(--surface-soft);
+      color: var(--purple-dark);
+    }
+
+    /* HERO */
+
     .hero {
-      padding: 78px 0 65px;
+      position: relative;
+      overflow: hidden;
+      padding: 85px 0 75px;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(237,101,166,.15), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba(114,82,232,.20), transparent 34%),
+        linear-gradient(135deg, #f4f0ff, #fff 55%, #fff0f7);
+    }
+
+    .hero-content {
+      max-width: 850px;
+      margin: auto;
       text-align: center;
     }
 
     .eyebrow {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       padding: 8px 15px;
-      border: 1px solid #a78bfa55;
+      background: white;
+      color: var(--purple-dark);
+      border: 1px solid #e7ddff;
       border-radius: 30px;
-      color: #d9c9ff;
-      background: #a78bfa14;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .6px;
     }
 
     h1, h2, h3 {
       font-family: "Space Grotesk", sans-serif;
-      line-height: 1.15;
+      line-height: 1.18;
     }
 
     h1 {
-      font-size: clamp(39px, 7vw, 72px);
-      letter-spacing: -2.8px;
-      margin: 24px auto 16px;
+      margin: 25px 0 18px;
+      font-size: clamp(40px, 7vw, 72px);
+      letter-spacing: -3px;
     }
 
     h1 span {
-      background: linear-gradient(90deg, #c4a7ff, #f18bc4);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
+      color: var(--purple);
     }
 
-    .lead {
+    .hero-description {
       max-width: 650px;
       margin: auto;
       color: var(--muted);
-      font-size: 16px;
+      font-size: 17px;
     }
 
-    .section {
-      padding: 40px 0;
+    .hero-tags {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 25px;
     }
 
-    .section-heading {
-      margin-bottom: 22px;
+    .hero-tags span {
+      padding: 7px 12px;
+      background: rgba(255,255,255,.8);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      color: #69657c;
+      font-size: 12px;
+      font-weight: 600;
     }
 
-    .section-heading h2 {
-      font-size: 29px;
-      margin: 0 0 7px;
-    }
+    /* MAIN SEARCH CARD */
 
-    .section-heading p {
-      color: var(--muted);
-      margin: 0;
-      font-size: 14px;
-    }
-
-    .search-panel {
-      max-width: 750px;
-      margin: 30px auto 0;
-      padding: 23px;
+    .search-card {
+      max-width: 790px;
+      margin: 42px auto 0;
+      padding: 26px;
       text-align: left;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 23px;
+      box-shadow: var(--shadow);
+    }
+
+    .search-card-heading {
+      margin-bottom: 19px;
+    }
+
+    .search-card-heading h2 {
+      margin: 0 0 5px;
+      font-size: 22px;
+    }
+
+    .search-card-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .mode-tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 9px;
-      margin-bottom: 20px;
+      gap: 8px;
+      padding: 6px;
+      margin-bottom: 22px;
+      background: #f2f1f8;
+      border-radius: 13px;
     }
 
     .mode-tab {
-      padding: 13px;
-      color: #c8c0d7;
-      background: #100d1b;
-      border: 1px solid var(--line);
-      border-radius: 11px;
+      padding: 12px;
+      color: #77738a;
+      background: transparent;
+      border: none;
+      border-radius: 9px;
       font-weight: 700;
+      transition: .2s;
     }
 
     .mode-tab.active {
-      color: white;
-      background: #302342;
-      border-color: var(--purple);
+      color: var(--purple-dark);
+      background: white;
+      box-shadow: 0 2px 8px #25204b12;
     }
 
     .field-label {
@@ -258,17 +312,20 @@
 
     .field {
       width: 100%;
-      padding: 14px;
-      color: white;
-      background: #100d1b;
-      border: 1px solid #ffffff25;
+      min-height: 52px;
+      padding: 13px 15px;
+      color: var(--ink);
+      background: #fafaff;
+      border: 1px solid #dedbea;
       border-radius: 11px;
       outline: none;
+      transition: .2s;
     }
 
     .field:focus {
+      background: white;
       border-color: var(--purple);
-      box-shadow: 0 0 0 3px #a78bfa20;
+      box-shadow: 0 0 0 4px #7252e81b;
     }
 
     .search-actions {
@@ -279,50 +336,72 @@
 
     .search-actions .btn {
       flex: 1;
+      min-height: 49px;
     }
 
     .help-text {
+      margin: 10px 0 0;
       color: var(--muted);
       font-size: 12px;
-      margin: 10px 0 0;
     }
 
     .results {
       display: none;
       margin-top: 18px;
       padding: 17px;
-      background: #100d1b;
-      border: 1px solid var(--line);
-      border-radius: 14px;
+      background: #f8f6ff;
+      border: 1px solid #e7e0ff;
+      border-radius: 13px;
     }
 
     .results.show {
       display: block;
     }
 
-    .results a {
-      display: inline-block;
-      margin: 8px 12px 0 0;
-      color: #cbb3ff;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+    .results p {
+      color: var(--muted);
+      font-size: 13px;
     }
+
+    .result-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .result-links a {
+      display: inline-flex;
+      padding: 9px 13px;
+      color: var(--purple-dark);
+      background: white;
+      border: 1px solid #e4dcff;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .result-links a:hover {
+      background: var(--surface-soft);
+    }
+
+    /* VIDEO WORKFLOW */
 
     .status {
       min-height: 24px;
-      margin-top: 14px;
-      color: #d4c5ff;
+      margin-top: 15px;
+      color: var(--purple-dark);
       font-size: 13px;
+      font-weight: 600;
       overflow-wrap: anywhere;
     }
 
     .video-card {
       display: none;
       margin-top: 20px;
-      padding: 18px;
-      background: #100d1b;
-      border: 1px solid var(--line);
-      border-radius: 15px;
+      padding: 20px;
+      background: #faf9ff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
     }
 
     .video-card.show {
@@ -331,22 +410,23 @@
 
     .video-preview {
       display: flex;
-      gap: 15px;
       align-items: flex-start;
-      margin-bottom: 18px;
+      gap: 15px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
     }
 
     .video-preview img {
-      width: 150px;
+      width: 155px;
       max-height: 110px;
       object-fit: cover;
       border-radius: 10px;
-      background: #29213d;
+      background: #e9e5f5;
     }
 
     .video-preview h3 {
-      font-size: 17px;
-      margin: 0 0 8px;
+      margin: 3px 0 7px;
+      font-size: 18px;
       overflow-wrap: anywhere;
     }
 
@@ -356,11 +436,16 @@
       font-size: 12px;
     }
 
+    .workflow-title {
+      margin: 21px 0 13px;
+      font-size: 15px;
+    }
+
     .step {
       display: flex;
-      gap: 12px;
       align-items: flex-start;
-      margin: 16px 0;
+      gap: 12px;
+      margin: 18px 0;
     }
 
     .step-number {
@@ -368,10 +453,11 @@
       place-items: center;
       flex: 0 0 30px;
       height: 30px;
+      color: var(--purple-dark);
+      background: #ece6ff;
       border-radius: 50%;
-      background: #a78bfa22;
-      color: #d9c9ff;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
     }
 
     .step-content {
@@ -381,7 +467,8 @@
 
     .step-content strong {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
+      font-size: 14px;
     }
 
     .step-content p {
@@ -392,11 +479,12 @@
 
     .format-select {
       width: 100%;
-      padding: 13px;
-      margin-top: 7px;
-      color: white;
-      background: #191528;
-      border: 1px solid #ffffff30;
+      min-height: 47px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #dedbea;
       border-radius: 10px;
     }
 
@@ -404,12 +492,13 @@
       display: flex;
       align-items: flex-start;
       gap: 11px;
-      margin: 18px 0;
+      margin: 20px 0;
       padding: 14px;
-      background: #211b33;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      font-size: 13px;
+      color: #514c66;
+      background: #f0edff;
+      border: 1px solid #e3dcff;
+      border-radius: 11px;
+      font-size: 12px;
     }
 
     .permission input {
@@ -422,9 +511,9 @@
     .download-area {
       display: none;
       margin-top: 18px;
-      padding: 17px;
-      background: #211b33;
-      border: 1px solid #a78bfa66;
+      padding: 18px;
+      background: #eaf8f1;
+      border: 1px solid #c8ead9;
       border-radius: 13px;
     }
 
@@ -432,30 +521,82 @@
       display: block;
     }
 
+    .download-area p {
+      margin: 0 0 13px;
+      color: #176a4a;
+      font-size: 13px;
+    }
+
+    .download-link {
+      display: inline-flex;
+      padding: 12px 18px;
+      color: white;
+      background: var(--success);
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .download-link:hover {
+      background: #106b49;
+    }
+
+    /* SECTION HEADINGS */
+
+    .section {
+      padding: 65px 0;
+    }
+
+    .section-heading {
+      margin-bottom: 25px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 8px;
+      font-size: clamp(25px, 4vw, 34px);
+      letter-spacing: -1px;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* GENRES */
+
     .genre-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+      gap: 16px;
     }
 
     .genre {
+      position: relative;
+      min-height: 155px;
       padding: 20px;
-      min-height: 135px;
       text-align: left;
-      color: white;
-      background: linear-gradient(145deg, #29213d, #191528);
-      border: 1px solid var(--line);
+      color: var(--ink);
+      background: white;
+      border: 1px solid var(--border);
       border-radius: 17px;
+      transition: .2s ease;
     }
 
     .genre:hover {
-      border-color: var(--purple);
+      transform: translateY(-4px);
+      border-color: #c9baff;
+      box-shadow: var(--shadow);
     }
 
     .genre .emoji {
-      display: block;
-      font-size: 26px;
-      margin-bottom: 12px;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      margin-bottom: 14px;
+      background: var(--surface-soft);
+      border-radius: 13px;
+      font-size: 23px;
     }
 
     .genre strong {
@@ -465,58 +606,102 @@
 
     .genre small {
       display: block;
-      color: var(--muted);
       margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
     }
+
+    /* FEATURES */
 
     .features {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      gap: 17px;
     }
 
-    .feature, .faq-item {
-      padding: 21px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 16px;
+    .feature {
+      padding: 25px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+    }
+
+    .feature-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      margin-bottom: 17px;
+      background: var(--surface-soft);
+      border-radius: 13px;
+      font-size: 23px;
     }
 
     .feature h3 {
-      font-size: 17px;
       margin: 0 0 9px;
+      font-size: 18px;
     }
 
-    .feature p, .faq-item p {
+    .feature p {
       margin: 0;
       color: var(--muted);
       font-size: 13px;
     }
 
+    /* FAQ */
+
     .faq-list {
       display: grid;
-      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .faq-item {
+      padding: 21px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 15px;
     }
 
     .faq-item h3 {
-      font-size: 16px;
       margin: 0 0 9px;
+      font-size: 16px;
     }
 
-    .about {
-      max-width: 800px;
-    }
-
-    .about p {
-      color: var(--muted);
-    }
-
-    footer {
-      margin-top: 40px;
-      padding: 30px 0;
-      border-top: 1px solid var(--line);
+    .faq-item p {
+      margin: 0;
       color: var(--muted);
       font-size: 13px;
+    }
+
+    /* ABOUT */
+
+    .about-card {
+      padding: 35px;
+      background: linear-gradient(120deg, #f0edff, #fff0f7);
+      border: 1px solid #e8defc;
+      border-radius: 20px;
+    }
+
+    .about-card h2 {
+      margin: 0 0 12px;
+      font-size: 28px;
+    }
+
+    .about-card p {
+      max-width: 780px;
+      margin: 0;
+      color: #6f6a83;
+      font-size: 14px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      margin-top: 35px;
+      padding: 35px 0;
+      color: #c5c1d5;
+      background: #17152b;
     }
 
     .footer-inner {
@@ -527,7 +712,31 @@
       flex-wrap: wrap;
     }
 
-    @media(max-width: 800px) {
+    footer .logo {
+      color: white;
+    }
+
+    footer .logo span {
+      color: #b6a2ff;
+    }
+
+    .footer-description {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #aaa5bd;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width: 850px) {
       .genre-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -535,27 +744,76 @@
       .features {
         grid-template-columns: 1fr;
       }
+
+      .nav-links {
+        gap: 15px;
+      }
     }
 
-    @media(max-width: 560px) {
-      .wrap {
-        width: calc(100% - 26px);
+    @media(max-width: 600px) {
+      .container {
+        width: calc(100% - 28px);
       }
 
-      nav {
+      .nav {
+        min-height: 66px;
+      }
+
+      .logo {
+        font-size: 23px;
+      }
+
+      .nav-links {
         display: none;
       }
 
-      .hero {
-        padding: 55px 0 40px;
+      .nav > .btn {
+        padding: 10px 13px;
+        font-size: 12px;
       }
 
-      .search-panel {
-        padding: 16px;
+      .hero {
+        padding: 58px 0 48px;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .hero-description {
+        font-size: 14px;
+      }
+
+      .search-card {
+        margin-top: 30px;
+        padding: 17px;
+        border-radius: 17px;
       }
 
       .search-actions {
         flex-direction: column;
+      }
+
+      .mode-tab {
+        font-size: 12px;
+        padding: 11px 5px;
+      }
+
+      .section {
+        padding: 43px 0;
+      }
+
+      .genre-grid {
+        gap: 10px;
+      }
+
+      .genre {
+        min-height: 140px;
+        padding: 15px;
+      }
+
+      .faq-list {
+        grid-template-columns: 1fr;
       }
 
       .video-preview {
@@ -564,124 +822,173 @@
 
       .video-preview img {
         width: 100%;
-        max-height: 200px;
+        max-height: 190px;
       }
 
-      .section {
-        padding: 30px 0;
+      .about-card {
+        padding: 23px;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
 
     @media(prefers-reduced-motion:reduce) {
       html { scroll-behavior: auto; }
-      *, *::before, *::after { transition: none !important; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
     }
   </style>
 </head>
 
 <body>
-<header>
-  <div class="wrap nav">
+
+<header class="header">
+  <div class="container nav">
     <a class="logo" href="/">VYBE<span>MUSE.</span></a>
-    <nav aria-label="Main navigation">
+
+    <nav class="nav-links" aria-label="Main navigation">
       <a href="#discover">Discover</a>
       <a href="#genres">Genres</a>
       <a href="#tools">Media tools</a>
       <a href="#about">About</a>
     </nav>
-    <a class="btn" href="#discover">Get started</a>
+
+    <a class="btn" href="#tools">Start exploring ↗</a>
   </div>
 </header>
 
 <main>
-  <section class="hero" id="discover">
-    <div class="wrap">
-      <div class="eyebrow">Your sound. Your world.</div>
-      <h1>Discover music.<br><span>Feel every vibe.</span></h1>
 
-      <p class="lead">
-        Explore Rwandan and African music, discover artists,
-        search songs and retrieve information about media you
-        have permission to download.
+  <!-- HERO -->
+  <section class="hero" id="discover">
+    <div class="container hero-content">
+
+      <div class="eyebrow">✦ MUSIC WITHOUT BORDERS</div>
+
+      <h1>
+        Find your sound.<br>
+        <span>Feel the vibe.</span>
+      </h1>
+
+      <p class="hero-description">
+        Discover Rwandan and African music, explore your favourite
+        genres and find new sounds from artists around the world.
       </p>
 
-      <div class="search-panel" id="tools">
+      <div class="hero-tags">
+        <span>🇷🇼 Rwandan music</span>
+        <span>🌍 African sounds</span>
+        <span>🎧 Global music</span>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="search-card" id="tools">
+
+        <div class="search-card-heading">
+          <h2>What are you looking for?</h2>
+          <p>Choose how you want to explore Vybemuse.</p>
+        </div>
+
         <div class="mode-tabs">
           <button class="mode-tab active" id="searchMode" type="button">
-            🔎 Search music
+            🔎 Discover music
           </button>
+
           <button class="mode-tab" id="urlMode" type="button">
-            🔗 Paste video URL
+            🔗 Video URL
           </button>
         </div>
 
+        <!-- MUSIC SEARCH -->
         <div id="searchPanel">
+
           <label class="field-label" for="musicQuery">
-            What do you want to discover?
+            Enter a song, artist or genre
           </label>
 
           <input
             class="field"
             id="musicQuery"
             type="search"
-            placeholder="Enter an artist, song, album or genre..."
+            placeholder="e.g. Bruce Melodie, Afrobeats..."
             maxlength="120"
           >
 
           <div class="search-actions">
             <button class="btn" id="searchMusic" type="button">
-              Search music
+              Search music <span>→</span>
             </button>
           </div>
 
           <p class="help-text">
-            Search YouTube, Spotify and SoundCloud from one place.
+            Select a platform to explore your search results.
           </p>
 
           <div class="results" id="musicResults" aria-live="polite"></div>
         </div>
 
+        <!-- VIDEO URL -->
         <div id="urlPanel" hidden>
+
           <label class="field-label" for="mediaUrl">
-            Step 1 – Paste a supported video URL
+            Paste your video link
           </label>
 
           <input
             class="field"
             id="mediaUrl"
             type="url"
-            placeholder="https://..."
+            placeholder="https://www.example.com/video..."
             autocomplete="url"
             maxlength="2048"
           >
 
           <p class="help-text">
-            Enter a supported HTTPS URL for media you own or
-            have permission to download.
+            Use a supported HTTPS link for media you own or are
+            authorized to download.
           </p>
 
           <div class="search-actions">
             <button class="btn" id="findMedia" type="button">
-              Find video information
+              Find video information →
             </button>
           </div>
 
           <div class="status" id="mediaStatus" role="status" aria-live="polite"></div>
 
+          <!-- VIDEO RESULT -->
           <div class="video-card" id="mediaResult" aria-live="polite">
+
             <div class="video-preview">
               <img id="videoThumbnail" alt="Video thumbnail" hidden>
+
               <div>
                 <h3 id="videoTitle"></h3>
                 <p id="videoDetails"></p>
               </div>
             </div>
 
+            <h3 class="workflow-title">Complete these steps</h3>
+
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <strong>Review your video</strong>
+                <p>Check the title and details above.</p>
+              </div>
+            </div>
+
             <div class="step">
               <div class="step-number">2</div>
               <div class="step-content">
-                <strong>Choose your format</strong>
-                <p>Select an available format provided by the media service.</p>
+                <strong>Choose a format</strong>
+                <p>Select one of the formats provided by the media service.</p>
+
                 <select id="formatSelect" class="format-select" aria-label="Choose video format"></select>
               </div>
             </div>
@@ -690,34 +997,41 @@
               <div class="step-number">3</div>
               <div class="step-content">
                 <strong>Confirm your permission</strong>
-                <p>Only continue if you own this media or have permission to download it.</p>
+                <p>Only continue if you have the necessary rights.</p>
               </div>
             </div>
 
             <label class="permission">
               <input type="checkbox" id="permissionCheck">
-              <span>I own this media or have permission from the rights holder to download it.</span>
+              <span>
+                I own this media or have permission from the rights
+                holder to download it.
+              </span>
             </label>
 
             <button class="btn" id="prepareDownload" type="button" disabled>
-              Prepare my download
+              Prepare my download →
             </button>
 
             <div class="download-area" id="downloadArea"></div>
+
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="wrap">
-    <section class="section" id="genres">
+  <!-- GENRES -->
+  <section class="section" id="genres">
+    <div class="container">
+
       <div class="section-heading">
-        <h2>Explore popular music genres</h2>
-        <p>Choose a genre to start discovering new sounds.</p>
+        <h2>Explore music by genre</h2>
+        <p>Choose a category and discover new music.</p>
       </div>
 
       <div class="genre-grid">
+
         <button class="genre" data-query="African music">
           <span class="emoji">🌍</span>
           <strong>African Music</strong>
@@ -765,90 +1079,151 @@
           <strong>Dancehall</strong>
           <small>High-energy rhythms</small>
         </button>
-      </div>
-    </section>
 
-    <section class="section">
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="container">
+
       <div class="section-heading">
-        <h2>Why use Vybemuse?</h2>
-        <p>Music discovery with a simple experience.</p>
+        <h2>Everything starts with a vibe</h2>
+        <p>Explore music and supported media in a simple way.</p>
       </div>
 
       <div class="features">
+
         <article class="feature">
-          <h3>🌍 Discover new music</h3>
-          <p>Explore music from Rwanda, Africa and international artists.</p>
+          <div class="feature-icon">🌍</div>
+          <h3>Discover music</h3>
+          <p>
+            Explore Rwandan, African and international music
+            from popular music platforms.
+          </p>
         </article>
 
         <article class="feature">
-          <h3>🔎 Search easily</h3>
-          <p>Search songs and artists across popular music services.</p>
+          <div class="feature-icon">🔎</div>
+          <h3>Simple searching</h3>
+          <p>
+            Find songs, artists, albums and genres using
+            straightforward search options.
+          </p>
         </article>
 
         <article class="feature">
-          <h3>📥 Clear download steps</h3>
-          <p>Review media details, choose an available format and prepare permitted downloads.</p>
+          <div class="feature-icon">📥</div>
+          <h3>Clear download steps</h3>
+          <p>
+            Review supported media information, select a format
+            and prepare downloads you are authorized to make.
+          </p>
         </article>
+
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section">
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+
       <div class="section-heading">
         <h2>Frequently asked questions</h2>
-        <p>Learn how Vybemuse works.</p>
+        <p>Everything you need to know about using Vybemuse.</p>
       </div>
 
       <div class="faq-list">
+
         <article class="faq-item">
           <h3>How do I search for music?</h3>
-          <p>Choose Search music, enter a song, artist or genre, and select a music platform to view its results.</p>
+          <p>
+            Select Discover music, enter a song, artist or genre,
+            and choose a platform to explore the results.
+          </p>
         </article>
 
         <article class="faq-item">
           <h3>How do I retrieve video information?</h3>
-          <p>Choose Paste video URL, enter a supported HTTPS link and select Find video information.</p>
+          <p>
+            Select Video URL, paste a supported HTTPS link
+            and click Find video information.
+          </p>
         </article>
 
         <article class="faq-item">
           <h3>How do I prepare a download?</h3>
-          <p>Review the information, choose an available format, confirm your permission and select Prepare my download.</p>
+          <p>
+            Review the information, choose an available format,
+            confirm your permission and select Prepare my download.
+          </p>
         </article>
 
         <article class="faq-item">
           <h3>Can I download any video?</h3>
-          <p>No. Only use media you own, have licensed, or have explicit permission to download. Respect applicable platform terms and copyright rules.</p>
+          <p>
+            No. Only use media you own, have licensed or have
+            permission to download. Respect copyright and platform rules.
+          </p>
         </article>
 
         <article class="faq-item">
           <h3>Does Vybemuse host music?</h3>
-          <p>Vybemuse helps users discover music and access supported media information. Search results on third-party platforms remain subject to those platforms' rules.</p>
+          <p>
+            Vybemuse helps users discover music and access
+            supported media information. Third-party platforms
+            retain control of their content.
+          </p>
         </article>
-      </div>
-    </section>
 
-    <section class="section about" id="about">
-      <div class="section-heading">
+        <article class="faq-item">
+          <h3>Is Vybemuse mobile-friendly?</h3>
+          <p>
+            Yes. The interface adjusts to mobile phones,
+            tablets and desktop screens.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="about-card">
         <h2>About Vybemuse</h2>
-      </div>
 
-      <p>
-        Vybemuse is a music discovery platform designed to make it
-        easier to explore African music, Rwandan artists, popular
-        genres and international sounds. Users can search popular
-        music platforms or retrieve information about supported
-        media links.
-      </p>
-    </section>
-  </div>
+        <p>
+          Vybemuse is a music discovery platform designed to make
+          it easier to explore African music, Rwandan artists,
+          popular genres and international sounds. Users can
+          search popular music platforms or retrieve information
+          about supported media links. Our goal is to make music
+          discovery straightforward, accessible and enjoyable.
+        </p>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
-  <div class="wrap footer-inner">
+  <div class="container footer-inner">
+
     <div>
       <a class="logo" href="/">VYBE<span>MUSE.</span></a>
-      <div>Discover music. Feel every vibe.</div>
+      <div class="footer-description">
+        Discover music. Feel every vibe.
+      </div>
     </div>
-    <div>© <span id="year"></span> Vybemuse. All rights reserved.</div>
+
+    <div class="footer-copy">
+      © <span id="year"></span> Vybemuse. All rights reserved.
+    </div>
+
   </div>
 </footer>
 
@@ -858,6 +1233,8 @@
   let activeJob = null;
   let pollTimer = null;
   let currentVideo = null;
+
+  // SWITCH BETWEEN SEARCH AND VIDEO MODES
 
   function setMode(mode) {
     const search = mode === "search";
@@ -872,35 +1249,40 @@
   $("searchMode").addEventListener("click", () => setMode("search"));
   $("urlMode").addEventListener("click", () => setMode("url"));
 
+  // MUSIC SEARCH
+
   function showMusicResults(query) {
     const encoded = encodeURIComponent(query);
 
     const links = [
-      ["Search YouTube", `https://www.youtube.com/results?search_query=${encoded}`],
-      ["Search Spotify", `https://open.spotify.com/search/${encoded}`],
-      ["Search SoundCloud", `https://soundcloud.com/search?q=${encoded}`]
+      ["YouTube", `https://www.youtube.com/results?search_query=${encoded}`],
+      ["Spotify", `https://open.spotify.com/search/${encoded}`],
+      ["SoundCloud", `https://soundcloud.com/search?q=${encoded}`]
     ];
 
     const box = $("musicResults");
     box.replaceChildren();
 
     const heading = document.createElement("strong");
-    heading.textContent = `Search results for "${query}"`;
+    heading.textContent = `Explore "${query}"`;
 
     const description = document.createElement("p");
-    description.textContent = "Choose where you want to explore this search.";
+    description.textContent =
+      "Choose a platform to continue your music search.";
 
-    box.append(heading, description);
+    const linkContainer = document.createElement("div");
+    linkContainer.className = "result-links";
 
     links.forEach(([label, url]) => {
       const link = document.createElement("a");
       link.href = url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = label;
-      box.append(link);
+      link.textContent = `Search ${label} ↗`;
+      linkContainer.append(link);
     });
 
+    box.append(heading, description, linkContainer);
     box.classList.add("show");
   }
 
@@ -925,21 +1307,33 @@
   document.querySelectorAll("[data-query]").forEach(button => {
     button.addEventListener("click", () => {
       const query = button.dataset.query;
+
       $("musicQuery").value = query;
       setMode("search");
       showMusicResults(query);
+
       $("discover").scrollIntoView({ behavior: "smooth" });
     });
   });
 
+  // URL VALIDATION
+
   function safeHttpsUrl(value) {
     try {
       const url = new URL(value);
-      return url.protocol === "https:" ? url.href : null;
+
+      return url.protocol === "https:" &&
+        !url.username &&
+        !url.password &&
+        !url.port
+        ? url.href
+        : null;
     } catch {
       return null;
     }
   }
+
+  // READ JSON RESPONSE
 
   async function readJson(response) {
     const raw = await response.text();
@@ -958,6 +1352,8 @@
       payload?.result ||
       payload || {};
   }
+
+  // FORMAT NORMALIZATION
 
   function normalizeFormats(video) {
     const raw = video.formats ||
@@ -986,6 +1382,8 @@
     );
   }
 
+  // RESET DOWNLOAD INTERFACE
+
   function resetDownloadArea() {
     $("downloadArea").replaceChildren();
     $("downloadArea").classList.remove("show");
@@ -993,19 +1391,28 @@
     $("prepareDownload").disabled = true;
   }
 
+  // DISPLAY VIDEO INFORMATION
+
   function showMediaInfo(payload) {
     const video = unwrapVideo(payload);
     currentVideo = video;
 
-    const title = video.title || video.name || "Media information retrieved";
+    const title = video.title ||
+      video.name ||
+      "Media information retrieved";
 
     $("videoTitle").textContent = title;
 
     const details = [];
 
-    if (video.duration) details.push(`Duration: ${video.duration}`);
+    if (video.duration) {
+      details.push(`Duration: ${video.duration}`);
+    }
+
     if (video.uploader || video.author || video.channel) {
-      details.push(`By: ${video.uploader || video.author || video.channel}`);
+      details.push(
+        `By: ${video.uploader || video.author || video.channel}`
+      );
     }
 
     $("videoDetails").textContent = details.join(" · ") ||
@@ -1035,9 +1442,8 @@
     if (!formats.length) {
       const option = document.createElement("option");
       option.value = "";
-      option.textContent = "No formats were supplied by the provider";
+      option.textContent = "No formats supplied by provider";
       select.append(option);
-      $("prepareDownload").disabled = true;
     } else {
       formats.forEach(value => {
         const option = document.createElement("option");
@@ -1051,26 +1457,27 @@
     $("mediaResult").classList.add("show");
   }
 
-  $("permissionCheck").addEventListener("change", () => {
-    $("prepareDownload").disabled =
-      !$("permissionCheck").checked ||
-      !$("formatSelect").value ||
-      !currentVideo;
-  });
+  // VALIDATE USER SELECTIONS
 
-  $("formatSelect").addEventListener("change", () => {
+  function updatePrepareButton() {
     $("prepareDownload").disabled =
       !$("permissionCheck").checked ||
       !$("formatSelect").value ||
-      !currentVideo;
-  });
+      !currentVideo ||
+      Boolean(activeJob);
+  }
+
+  $("permissionCheck").addEventListener("change", updatePrepareButton);
+  $("formatSelect").addEventListener("change", updatePrepareButton);
+
+  // FIND VIDEO INFORMATION
 
   $("findMedia").addEventListener("click", async () => {
     const url = safeHttpsUrl($("mediaUrl").value.trim());
 
     if (!url) {
       $("mediaStatus").textContent =
-        "Please enter a valid HTTPS video URL.";
+        "Please enter a valid supported HTTPS video URL.";
       $("mediaUrl").focus();
       return;
     }
@@ -1080,7 +1487,10 @@
     button.disabled = true;
     button.textContent = "Finding video...";
     $("mediaStatus").textContent = "Retrieving video information...";
+
     $("mediaResult").classList.remove("show");
+    currentVideo = null;
+    resetDownloadArea();
 
     try {
       const response = await fetch("/api/video/info", {
@@ -1092,20 +1502,25 @@
       const data = await readJson(response);
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || "Could not retrieve video information.");
+        throw new Error(
+          data.message || "Could not retrieve video information."
+        );
       }
 
       showMediaInfo(data.video);
 
       $("mediaStatus").textContent =
-        "Step 1 complete. Review the video and continue below.";
+        "Video information found. Follow the steps below.";
+
     } catch (error) {
       $("mediaStatus").textContent = error.message;
     } finally {
       button.disabled = false;
-      button.textContent = "Find video information";
+      button.textContent = "Find video information →";
     }
   });
+
+  // PREPARE DOWNLOAD
 
   $("prepareDownload").addEventListener("click", async () => {
     if (!$("permissionCheck").checked) {
@@ -1114,9 +1529,9 @@
       return;
     }
 
-    if (!$("formatSelect").value) {
+    if (!$("formatSelect").value || !currentVideo) {
       $("mediaStatus").textContent =
-        "No available format has been supplied by the provider.";
+        "Please select an available format.";
       return;
     }
 
@@ -1138,7 +1553,7 @@
     button.disabled = true;
     button.textContent = "Preparing...";
     $("mediaStatus").textContent =
-      "Your file is being prepared. Please keep this page open.";
+      "Your file is being prepared. Please wait.";
 
     resetDownloadArea();
 
@@ -1156,19 +1571,24 @@
       const data = await readJson(response);
 
       if (!response.ok || !data.success || !data.job?.id) {
-        throw new Error(data.message || "Could not prepare your file.");
+        throw new Error(
+          data.message || "Could not prepare your file."
+        );
       }
 
       activeJob = data.job.id;
       button.textContent = "Preparing your file...";
 
       pollJob(activeJob, button);
+
     } catch (error) {
       $("mediaStatus").textContent = error.message;
       button.disabled = false;
-      button.textContent = "Prepare my download";
+      button.textContent = "Prepare my download →";
     }
   });
+
+  // DISPLAY DOWNLOAD BUTTON
 
   function showDownloadButton(jobId, button) {
     const area = $("downloadArea");
@@ -1176,10 +1596,10 @@
 
     const message = document.createElement("p");
     message.textContent =
-      "Your file is ready. Use the button below to download it through Vybemuse.";
+      "Your file is ready. Download it through Vybemuse.";
 
     const link = document.createElement("a");
-    link.className = "btn";
+    link.className = "download-link";
     link.href = `/api/video/file/${encodeURIComponent(jobId)}`;
     link.textContent = "⬇ Download my file";
     link.setAttribute("download", "");
@@ -1187,13 +1607,17 @@
     link.addEventListener("click", () => {
       $("mediaStatus").textContent =
         "Your download request has started.";
+
       button.disabled = false;
-      button.textContent = "Prepare another download";
+      button.textContent = "Prepare another download →";
+      updatePrepareButton();
     });
 
     area.append(message, link);
     area.classList.add("show");
   }
+
+  // CHECK JOB PROGRESS
 
   function pollJob(jobId, button) {
     const started = Date.now();
@@ -1203,6 +1627,7 @@
       if (Date.now() - started > maxWait) {
         $("mediaStatus").textContent =
           "Processing is taking longer than expected. Please try again later.";
+
         activeJob = null;
         button.disabled = false;
         button.textContent = "Try again";
@@ -1217,7 +1642,9 @@
         const data = await readJson(response);
 
         if (!response.ok || !data.success) {
-          throw new Error(data.message || "Could not check progress.");
+          throw new Error(
+            data.message || "Could not check download progress."
+          );
         }
 
         const job = data.job || {};
@@ -1229,6 +1656,7 @@
           if (!job.downloadReady) {
             $("mediaStatus").textContent =
               "The provider completed the job but has not supplied a download file.";
+
             button.disabled = false;
             button.textContent = "Try again";
             return;
@@ -1236,26 +1664,30 @@
 
           $("mediaStatus").textContent = "Your file is ready!";
           showDownloadButton(jobId, button);
-          button.textContent = "Prepare another download";
+          button.textContent = "Prepare another download →";
           return;
         }
 
         if (["failed", "error", "cancelled", "canceled"].includes(status)) {
           activeJob = null;
+
           $("mediaStatus").textContent =
             job.message || `The provider reported: ${status}.`;
+
           button.disabled = false;
           button.textContent = "Try again";
           return;
         }
 
         $("mediaStatus").textContent =
-          `Step 4 – Preparing your file: ${status}. Please wait...`;
+          `Preparing your file: ${status}. Please wait...`;
 
         pollTimer = setTimeout(check, 3500);
+
       } catch (error) {
         $("mediaStatus").textContent =
           `${error.message} Checking again shortly...`;
+
         pollTimer = setTimeout(check, 5000);
       }
     }
@@ -1263,7 +1695,10 @@
     check();
   }
 
+  // FOOTER YEAR
+
   $("year").textContent = new Date().getFullYear();
 </script>
+
 </body>
 </html>
