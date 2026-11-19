@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -12,27 +11,31 @@ const PORT = process.env.PORT || 3000;
 const VIDFETCH_API = "https://api.vidfetch.dev";
 const VIDFETCH_KEY = process.env.VIDFETCH_API_KEY;
 
-// Security
-app.use(helmet({
-  contentSecurityPolicy: false
-}));
+// Security headers
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
 
+// Request parsing
 app.use(express.json({
   limit: "10kb"
 }));
 
-app.use("/api", rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 40,
-  standardHeaders: true,
-  legacyHeaders: false
-}));
-
-// Serve frontend files
-app.use(express.static(__dirname));
+// API rate limiting
+app.use(
+  "/api",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 40,
+    standardHeaders: true,
+    legacyHeaders: false
+  })
+);
 
 // Supported video hosts
-const allowedHosts = [
+const allowedHosts = new Set([
   "youtube.com",
   "www.youtube.com",
   "youtu.be",
@@ -47,27 +50,37 @@ const allowedHosts = [
   "www.instagram.com",
   "vimeo.com",
   "www.vimeo.com"
-];
+]);
 
-// Validate media URLs
+const allowedFormats = new Set([
+  "144p",
+  "240p",
+  "360p",
+  "480p",
+  "720p",
+  "1080p",
+  "1440p",
+  "2160p",
+  "mp3"
+]);
+
+// Validate video URL
 function validateVideoUrl(value) {
-  if (typeof value !== "string" || value.length > 2048) {
+  if (
+    typeof value !== "string" ||
+    value.length > 2048
+  ) {
     return null;
   }
 
   try {
     const url = new URL(value);
 
-    if (url.protocol !== "https:") {
-      return null;
-    }
-
-    if (!allowedHosts.includes(url.hostname.toLowerCase())) {
-      return null;
-    }
+    if (url.protocol !== "https:") return null;
+    if (!allowedHosts.has(url.hostname.toLowerCase())) return null;
+    if (url.port || url.username || url.password) return null;
 
     return url.href;
-
   } catch {
     return null;
   }
@@ -76,9 +89,12 @@ function validateVideoUrl(value) {
 // VidFetch API helper
 async function vidfetch(endpoint, options = {}) {
   if (!VIDFETCH_KEY) {
-    throw new Error(
-      "VIDFETCH_API_KEY is missing from Render environment variables."
+    const error = new Error(
+      "VIDFETCH_API_KEY is missing from environment variables."
     );
+
+    error.status = 503;
+    throw error;
   }
 
   const controller = new AbortController();
@@ -92,10 +108,12 @@ async function vidfetch(endpoint, options = {}) {
       `${VIDFETCH_API}${endpoint}`,
       {
         ...options,
+        redirect: "error",
         signal: controller.signal,
         headers: {
           Authorization: `Bearer ${VIDFETCH_KEY}`,
           "Content-Type": "application/json",
+          Accept: "application/json",
           ...options.headers
         }
       }
@@ -108,9 +126,12 @@ async function vidfetch(endpoint, options = {}) {
     try {
       data = JSON.parse(responseText);
     } catch {
-      throw new Error(
+      const error = new Error(
         `VidFetch returned an invalid response. HTTP ${response.status}`
       );
+
+      error.status = 502;
+      throw error;
     }
 
     if (!response.ok) {
@@ -120,7 +141,7 @@ async function vidfetch(endpoint, options = {}) {
         `VidFetch HTTP error: ${response.status}`
       );
 
-      error.status = response.status;
+      error.status = response.status === 429 ? 429 : 502;
       throw error;
     }
 
@@ -128,7 +149,21 @@ async function vidfetch(endpoint, options = {}) {
 
   } catch (error) {
     if (error.name === "AbortError") {
-      throw new Error("VidFetch request timed out.");
+      const timeoutError = new Error(
+        "VidFetch request timed out."
+      );
+
+      timeoutError.status = 504;
+      throw timeoutError;
+    }
+
+    if (error.name === "TypeError") {
+      const networkError = new Error(
+        "Unable to connect to VidFetch. Please try again."
+      );
+
+      networkError.status = 502;
+      throw networkError;
     }
 
     throw error;
@@ -152,64 +187,15 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// VidFetch connection diagnostic
-app.get("/api/vidfetch-test", async (req, res) => {
-  const started = Date.now();
-
-  if (!VIDFETCH_KEY) {
-    return res.status(500).json({
-      success: false,
-      message: "VIDFETCH_API_KEY is missing in Render."
-    });
-  }
-
-  const controller = new AbortController();
-
-  const timeout = setTimeout(() => {
-    controller.abort();
-  }, 10000);
-
-  try {
-    const response = await fetch(VIDFETCH_API, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${VIDFETCH_KEY}`
-      },
-      signal: controller.signal
-    });
-
-    const body = await response.text();
-
-    res.json({
-      success: true,
-      vidfetchReached: true,
-      vidfetchStatus: response.status,
-      responseTime: Date.now() - started,
-      responsePreview: body.slice(0, 300)
-    });
-
-  } catch (error) {
-    res.status(502).json({
-      success: false,
-      error: error.name,
-      message: error.message,
-      responseTime: Date.now() - started
-    });
-
-  } finally {
-    clearTimeout(timeout);
-  }
-});
-
 // Retrieve video information
 app.post("/api/video/info", async (req, res) => {
   try {
-    const videoUrl = validateVideoUrl(req.body.url);
+    const videoUrl = validateVideoUrl(req.body?.url);
 
     if (!videoUrl) {
       return res.status(400).json({
         success: false,
-        message: "Unsupported or invalid video URL."
+        message: "Unsupported or invalid HTTPS video URL."
       });
     }
 
@@ -226,7 +212,10 @@ app.post("/api/video/info", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Video information error:", error.message);
+    console.error(
+      "Video information error:",
+      error.message
+    );
 
     res.status(error.status || 502).json({
       success: false,
@@ -238,21 +227,9 @@ app.post("/api/video/info", async (req, res) => {
 // Create download job
 app.post("/api/video/download", async (req, res) => {
   try {
-    const videoUrl = validateVideoUrl(req.body.url);
+    const videoUrl = validateVideoUrl(req.body?.url);
 
-    const allowedFormats = [
-      "144p",
-      "240p",
-      "360p",
-      "480p",
-      "720p",
-      "1080p",
-      "1440p",
-      "2160p",
-      "mp3"
-    ];
-
-    const format = req.body.format || "720p";
+    const format = req.body?.format || "720p";
 
     if (!videoUrl) {
       return res.status(400).json({
@@ -261,14 +238,15 @@ app.post("/api/video/download", async (req, res) => {
       });
     }
 
-    if (!allowedFormats.includes(format)) {
+    if (!allowedFormats.has(format)) {
       return res.status(400).json({
         success: false,
         message: "Unsupported video format."
       });
     }
 
-    if (req.body.authorized !== true) {
+    // Require explicit user confirmation.
+    if (req.body?.authorized !== true) {
       return res.status(403).json({
         success: false,
         message: "Please confirm you have permission to download this content."
@@ -283,6 +261,18 @@ app.post("/api/video/download", async (req, res) => {
       })
     });
 
+    // VidFetch documentation specifies an id.
+    if (
+      !data ||
+      typeof data.id !== "string" ||
+      !/^dl_[a-zA-Z0-9_-]+$/.test(data.id)
+    ) {
+      return res.status(502).json({
+        success: false,
+        message: "VidFetch did not return a valid download job ID."
+      });
+    }
+
     res.status(202).json({
       success: true,
       message: "Download job created.",
@@ -290,7 +280,10 @@ app.post("/api/video/download", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Download creation error:", error.message);
+    console.error(
+      "Download creation error:",
+      error.message
+    );
 
     res.status(error.status || 502).json({
       success: false,
@@ -321,7 +314,10 @@ app.get("/api/video/status/:id", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Download status error:", error.message);
+    console.error(
+      "Download status error:",
+      error.message
+    );
 
     res.status(error.status || 502).json({
       success: false,
@@ -338,11 +334,35 @@ app.use("/api", (req, res) => {
   });
 });
 
+// Handle malformed JSON and other request errors
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  if (error instanceof SyntaxError && error.status === 400) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid JSON request."
+    });
+  }
+
+  console.error("Server error:", error.message);
+
+  res.status(500).json({
+    success: false,
+    message: "An unexpected server error occurred."
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log("--------------------------------");
   console.log("       VYBEMUSE SERVER");
   console.log("--------------------------------");
   console.log(`Server running on port ${PORT}`);
-  console.log("VidFetch key:", VIDFETCH_KEY ? "Configured" : "Missing");
+  console.log(
+    "VidFetch key:",
+    VIDFETCH_KEY ? "Configured" : "Missing"
+  );
 });
