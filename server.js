@@ -388,7 +388,7 @@ app.post("/api/video/info", async (req, res) => {
     const data = await vidfetch("/v1/info", {
       method: "POST",
       body: { url },
-      timeoutMs: 60000
+      timeoutMs: 300000
     });
 
     const media = unwrapProviderObject(data);
