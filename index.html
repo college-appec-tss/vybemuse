@@ -2,900 +2,1268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100d1b">
 
-<title>Vybemuse - Video Fetch and Download</title>
+  <title>Vybemuse – Discover African Music, Artists & Videos</title>
+  <meta name="description" content="Discover Rwandan and African music, explore artists and genres, search songs on popular platforms, and retrieve information about media you are authorized to download.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="keywords" content="Vybemuse, African music, Rwandan music, music discovery, Afrobeats, Amapiano, Rwandan artists, music search">
 
-<meta name="description" content="Use Vybemuse to fetch supported video information, preview prepared media and download files you have permission to save.">
-<meta name="theme-color" content="#100d1b">
+  <link rel="canonical" href="https://vybemuse.onrender.com/">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Vybemuse">
+  <meta property="og:title" content="Vybemuse – Discover Your Sound">
+  <meta property="og:description" content="Discover African music, explore Rwandan artists and search across popular music platforms.">
+  <meta property="og:url" content="https://vybemuse.onrender.com/">
+  <meta property="og:image" content="https://vybemuse.onrender.com/og-cover.svg">
 
-<style>
-:root {
-  --bg:#100d1b;
-  --panel:#1b1729;
-  --panel2:#231d35;
-  --text:#fff;
-  --muted:#aaa2bc;
-  --purple:#a78bfa;
-  --pink:#ed72b7;
-  --border:#ffffff18;
-  --success:#7de0a3;
-  --danger:#ff8d9b;
-}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Vybemuse – Discover Your Sound">
+  <meta name="twitter:description" content="Explore African music, artists, genres and new sounds.">
+  <meta name="twitter:image" content="https://vybemuse.onrender.com/og-cover.svg">
 
-* {
-  box-sizing:border-box;
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-body {
-  margin:0;
-  color:var(--text);
-  background:
-    radial-gradient(ellipse at 50% -10%,#653c9d55,transparent 45%),
-    var(--bg);
-  font-family:"DM Sans",Arial,sans-serif;
-  min-height:100vh;
-}
-
-button,input,select {
-  font:inherit;
-}
-
-button {
-  cursor:pointer;
-}
-
-.wrap {
-  width:min(1050px,calc(100% - 32px));
-  margin:auto;
-}
-
-header {
-  height:72px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  background:#100d1bf0;
-}
-
-.nav {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.logo {
-  font:700 25px "Space Grotesk",sans-serif;
-  letter-spacing:-1.5px;
-  color:white;
-  text-decoration:none;
-}
-
-.logo span {
-  color:var(--purple);
-}
-
-.nav small {
-  color:var(--muted);
-}
-
-.hero {
-  padding:65px 0 35px;
-  text-align:center;
-}
-
-.tag {
-  display:inline-block;
-  padding:7px 14px;
-  border:1px solid #a78bfa55;
-  background:#a78bfa14;
-  color:#d9c9ff;
-  border-radius:30px;
-  font-size:11px;
-  letter-spacing:1.4px;
-  text-transform:uppercase;
-}
-
-h1,h2,h3 {
-  font-family:"Space Grotesk",sans-serif;
-  line-height:1.2;
-}
-
-h1 {
-  font-size:clamp(38px,7vw,65px);
-  letter-spacing:-2.8px;
-  margin:20px 0 12px;
-}
-
-h1 span {
-  background:linear-gradient(90deg,#c4a7ff,#f18bc4);
-  color:transparent;
-  background-clip:text;
-  -webkit-background-clip:text;
-}
-
-.hero p {
-  max-width:600px;
-  margin:0 auto;
-  color:var(--muted);
-  line-height:1.7;
-}
-
-.main-card {
-  max-width:850px;
-  margin:25px auto 0;
-  padding:25px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:20px;
-  text-align:left;
-  box-shadow:0 20px 70px #0003;
-}
-
-.main-card h2 {
-  margin:0 0 7px;
-  font-size:22px;
-}
-
-.description {
-  color:var(--muted);
-  font-size:13px;
-  margin:0 0 20px;
-}
-
-.url-form {
-  display:flex;
-  gap:10px;
-}
-
-input,select {
-  min-width:0;
-  width:100%;
-  color:white;
-  background:#100d1b;
-  border:1px solid #ffffff25;
-  border-radius:11px;
-  padding:14px;
-  outline:none;
-}
-
-input:focus,select:focus {
-  border-color:var(--purple);
-}
-
-input::placeholder {
-  color:#898197;
-}
-
-.btn {
-  border:0;
-  border-radius:11px;
-  padding:13px 19px;
-  background:linear-gradient(110deg,#8059eb,#d34c9c);
-  color:white;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-.btn:hover {
-  filter:brightness(1.1);
-}
-
-.btn:disabled {
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.status {
-  min-height:23px;
-  margin:15px 0;
-  color:#cbb8ff;
-  font-size:13px;
-}
-
-.status.error {
-  color:var(--danger);
-}
-
-.status.success {
-  color:var(--success);
-}
-
-.video-details {
-  display:none;
-  margin-top:20px;
-  padding:18px;
-  border:1px solid var(--border);
-  border-radius:15px;
-  background:#100d1b;
-}
-
-.video-details.show {
-  display:block;
-}
-
-.video-layout {
-  display:grid;
-  grid-template-columns:220px 1fr;
-  gap:18px;
-  align-items:start;
-}
-
-.thumbnail {
-  width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
-  border-radius:11px;
-  background:#28213a;
-}
-
-.video-title {
-  font-size:19px;
-  margin:0 0 10px;
-  overflow-wrap:anywhere;
-}
-
-.video-meta {
-  font-size:13px;
-  color:var(--muted);
-  margin:5px 0;
-}
-
-.format-label {
-  display:block;
-  font-size:13px;
-  color:#d9d1e8;
-  margin:22px 0 8px;
-}
-
-.format-row {
-  display:flex;
-  gap:10px;
-}
-
-.format-row select {
-  flex:1;
-}
-
-.prepare-btn {
-  margin-top:12px;
-  width:100%;
-}
-
-.preview {
-  display:none;
-  margin-top:20px;
-  padding-top:20px;
-  border-top:1px solid var(--border);
-}
-
-.preview.show {
-  display:block;
-}
-
-.preview h3 {
-  font-size:17px;
-  margin:0 0 12px;
-}
-
-video {
-  display:block;
-  width:100%;
-  max-height:470px;
-  border-radius:12px;
-  background:#000;
-}
-
-.download-btn {
-  display:none;
-  width:100%;
-  margin-top:13px;
-  text-align:center;
-  text-decoration:none;
-}
-
-.download-btn.show {
-  display:block;
-}
-
-.note {
-  margin-top:14px;
-  color:#8e869f;
-  font-size:11px;
-  line-height:1.6;
-}
-
-.features {
-  padding:35px 0 65px;
-}
-
-.features h2 {
-  text-align:center;
-  font-size:25px;
-  margin-bottom:20px;
-}
-
-.feature-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-}
-
-.feature {
-  padding:20px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-}
-
-.feature strong {
-  display:block;
-  margin-bottom:7px;
-}
-
-.feature p {
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.6;
-  margin:0;
-}
-
-footer {
-  border-top:1px solid var(--border);
-  padding:25px 0;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.footer-row {
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-@media(max-width:650px) {
-  .hero {
-    padding-top:45px;
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Vybemuse",
+    "url": "https://vybemuse.onrender.com/",
+    "description": "Discover African music, Rwandan artists, genres and new sounds.",
+    "inLanguage": "en"
   }
+  </script>
 
-  .main-card {
-    padding:17px;
-  }
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #100d1b;
+      --panel: #191528;
+      --panel2: #211b33;
+      --text: #fff;
+      --muted: #aaa3bb;
+      --purple: #a78bfa;
+      --pink: #f472b6;
+      --line: #ffffff19;
+      --max: 1100px;
+    }
 
-  .url-form {
-    flex-direction:column;
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  .url-form .btn {
-    width:100%;
-  }
+    html {
+      scroll-behavior: smooth;
+    }
 
-  .video-layout {
-    grid-template-columns:1fr;
-  }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 50% -15%, #55318a55, transparent 42%),
+        var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", Arial, sans-serif;
+      line-height: 1.6;
+    }
 
-  .thumbnail {
-    max-width:100%;
-  }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-  .format-row {
-    flex-direction:column;
-  }
+    button, input, select {
+      font: inherit;
+    }
 
-  .feature-grid {
-    grid-template-columns:1fr;
-  }
+    button {
+      cursor: pointer;
+    }
 
-  .nav small {
-    display:none;
-  }
-}
-</style>
+    .wrap {
+      width: min(var(--max), calc(100% - 36px));
+      margin: auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #100d1bed;
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      font: 700 25px "Space Grotesk", sans-serif;
+      letter-spacing: -1.4px;
+    }
+
+    .logo span {
+      color: var(--purple);
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      color: #d3cde0;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: var(--pink);
+    }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 19px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(110deg, #8159ed, #d64d9e);
+      color: white;
+      font-weight: 700;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn.secondary {
+      background: #302742;
+      border: 1px solid var(--line);
+    }
+
+    .hero {
+      padding: 78px 0 65px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 15px;
+      border: 1px solid #a78bfa55;
+      border-radius: 30px;
+      color: #d9c9ff;
+      background: #a78bfa14;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 {
+      font-family: "Space Grotesk", sans-serif;
+      line-height: 1.15;
+    }
+
+    h1 {
+      font-size: clamp(39px, 7vw, 72px);
+      letter-spacing: -2.8px;
+      margin: 24px auto 16px;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, #c4a7ff, #f18bc4);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 650px;
+      margin: auto;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section {
+      padding: 40px 0;
+    }
+
+    .section-heading {
+      margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+      font-size: 29px;
+      margin: 0 0 7px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .search-panel {
+      max-width: 750px;
+      margin: 30px auto 0;
+      padding: 23px;
+      text-align: left;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-bottom: 20px;
+    }
+
+    .mode-tab {
+      padding: 13px;
+      color: #c8c0d7;
+      background: #100d1b;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      font-weight: 700;
+    }
+
+    .mode-tab.active {
+      color: white;
+      background: #302342;
+      border-color: var(--purple);
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .field {
+      width: 100%;
+      padding: 14px;
+      color: white;
+      background: #100d1b;
+      border: 1px solid #ffffff25;
+      border-radius: 11px;
+      outline: none;
+    }
+
+    .field:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px #a78bfa20;
+    }
+
+    .search-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .search-actions .btn {
+      flex: 1;
+    }
+
+    .help-text {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 10px 0 0;
+    }
+
+    .results {
+      display: none;
+      margin-top: 18px;
+      padding: 17px;
+      background: #100d1b;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .results a {
+      display: inline-block;
+      margin: 8px 12px 0 0;
+      color: #cbb3ff;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 14px;
+      color: #d4c5ff;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .video-card {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      background: #100d1b;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+    }
+
+    .video-card.show {
+      display: block;
+    }
+
+    .video-preview {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .video-preview img {
+      width: 150px;
+      max-height: 110px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #29213d;
+    }
+
+    .video-preview h3 {
+      font-size: 17px;
+      margin: 0 0 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .video-preview p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin: 16px 0;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      flex: 0 0 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #a78bfa22;
+      color: #d9c9ff;
+      font-weight: 700;
+    }
+
+    .step-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .step-content strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .step-content p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .format-select {
+      width: 100%;
+      padding: 13px;
+      margin-top: 7px;
+      color: white;
+      background: #191528;
+      border: 1px solid #ffffff30;
+      border-radius: 10px;
+    }
+
+    .permission {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      margin: 18px 0;
+      padding: 14px;
+      background: #211b33;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .permission input {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      accent-color: var(--purple);
+    }
+
+    .download-area {
+      display: none;
+      margin-top: 18px;
+      padding: 17px;
+      background: #211b33;
+      border: 1px solid #a78bfa66;
+      border-radius: 13px;
+    }
+
+    .download-area.show {
+      display: block;
+    }
+
+    .genre-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .genre {
+      padding: 20px;
+      min-height: 135px;
+      text-align: left;
+      color: white;
+      background: linear-gradient(145deg, #29213d, #191528);
+      border: 1px solid var(--line);
+      border-radius: 17px;
+    }
+
+    .genre:hover {
+      border-color: var(--purple);
+    }
+
+    .genre .emoji {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 12px;
+    }
+
+    .genre strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .genre small {
+      display: block;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .feature, .faq-item {
+      padding: 21px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .feature h3 {
+      font-size: 17px;
+      margin: 0 0 9px;
+    }
+
+    .feature p, .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .faq-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .faq-item h3 {
+      font-size: 16px;
+      margin: 0 0 9px;
+    }
+
+    .about {
+      max-width: 800px;
+    }
+
+    .about p {
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 30px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media(max-width: 800px) {
+      .genre-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width: 560px) {
+      .wrap {
+        width: calc(100% - 26px);
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero {
+        padding: 55px 0 40px;
+      }
+
+      .search-panel {
+        padding: 16px;
+      }
+
+      .search-actions {
+        flex-direction: column;
+      }
+
+      .video-preview {
+        flex-direction: column;
+      }
+
+      .video-preview img {
+        width: 100%;
+        max-height: 200px;
+      }
+
+      .section {
+        padding: 30px 0;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
 </head>
 
 <body>
-
 <header>
   <div class="wrap nav">
     <a class="logo" href="/">VYBE<span>MUSE.</span></a>
-    <small>Video tools powered by VidFetch</small>
+    <nav aria-label="Main navigation">
+      <a href="#discover">Discover</a>
+      <a href="#genres">Genres</a>
+      <a href="#tools">Media tools</a>
+      <a href="#about">About</a>
+    </nav>
+    <a class="btn" href="#discover">Get started</a>
   </div>
 </header>
 
 <main>
-  <section class="hero">
+  <section class="hero" id="discover">
     <div class="wrap">
+      <div class="eyebrow">Your sound. Your world.</div>
+      <h1>Discover music.<br><span>Feel every vibe.</span></h1>
 
-      <div class="tag">Your media, in one place</div>
-
-      <h1>Fetch your video.<br><span>Stay in Vybemuse.</span></h1>
-
-      <p>
-        Paste a supported video URL, view its information,
-        choose an available format and download your prepared file.
+      <p class="lead">
+        Explore Rwandan and African music, discover artists,
+        search songs and retrieve information about media you
+        have permission to download.
       </p>
 
-      <div class="main-card">
+      <div class="search-panel" id="tools">
+        <div class="mode-tabs">
+          <button class="mode-tab active" id="searchMode" type="button">
+            🔎 Search music
+          </button>
+          <button class="mode-tab" id="urlMode" type="button">
+            🔗 Paste video URL
+          </button>
+        </div>
 
-        <h2>Fetch a video</h2>
+        <div id="searchPanel">
+          <label class="field-label" for="musicQuery">
+            What do you want to discover?
+          </label>
 
-        <p class="description">
-          Paste a public video URL from a supported platform.
-        </p>
-
-        <form class="url-form" id="urlForm">
           <input
-            type="url"
-            id="videoUrl"
-            placeholder="Paste video URL here..."
-            required
-            autocomplete="url"
+            class="field"
+            id="musicQuery"
+            type="search"
+            placeholder="Enter an artist, song, album or genre..."
+            maxlength="120"
           >
 
-          <button class="btn" id="fetchButton" type="submit">
-            Fetch video
-          </button>
-        </form>
+          <div class="search-actions">
+            <button class="btn" id="searchMusic" type="button">
+              Search music
+            </button>
+          </div>
 
-        <div id="status" class="status" role="status" aria-live="polite"></div>
+          <p class="help-text">
+            Search YouTube, Spotify and SoundCloud from one place.
+          </p>
 
-        <section id="videoDetails" class="video-details">
+          <div class="results" id="musicResults" aria-live="polite"></div>
+        </div>
 
-          <div class="video-layout">
+        <div id="urlPanel" hidden>
+          <label class="field-label" for="mediaUrl">
+            Step 1 – Paste a supported video URL
+          </label>
 
-            <img
-              id="thumbnail"
-              class="thumbnail"
-              src=""
-              alt="Video thumbnail"
-            >
+          <input
+            class="field"
+            id="mediaUrl"
+            type="url"
+            placeholder="https://..."
+            autocomplete="url"
+            maxlength="2048"
+          >
 
-            <div>
-              <h3 id="videoTitle" class="video-title"></h3>
+          <p class="help-text">
+            Enter a supported HTTPS URL for media you own or
+            have permission to download.
+          </p>
 
-              <p id="videoUploader" class="video-meta"></p>
-              <p id="videoDuration" class="video-meta"></p>
-              <p id="videoSource" class="video-meta"></p>
+          <div class="search-actions">
+            <button class="btn" id="findMedia" type="button">
+              Find video information
+            </button>
+          </div>
+
+          <div class="status" id="mediaStatus" role="status" aria-live="polite"></div>
+
+          <div class="video-card" id="mediaResult" aria-live="polite">
+            <div class="video-preview">
+              <img id="videoThumbnail" alt="Video thumbnail" hidden>
+              <div>
+                <h3 id="videoTitle"></h3>
+                <p id="videoDetails"></p>
+              </div>
             </div>
 
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <strong>Choose your format</strong>
+                <p>Select an available format provided by the media service.</p>
+                <select id="formatSelect" class="format-select" aria-label="Choose video format"></select>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <strong>Confirm your permission</strong>
+                <p>Only continue if you own this media or have permission to download it.</p>
+              </div>
+            </div>
+
+            <label class="permission">
+              <input type="checkbox" id="permissionCheck">
+              <span>I own this media or have permission from the rights holder to download it.</span>
+            </label>
+
+            <button class="btn" id="prepareDownload" type="button" disabled>
+              Prepare my download
+            </button>
+
+            <div class="download-area" id="downloadArea"></div>
           </div>
-
-          <label class="format-label" for="formatSelect">
-            Select available format
-          </label>
-
-          <div class="format-row">
-            <select id="formatSelect"></select>
-          </div>
-
-          <label class="format-label">
-            Permission confirmation
-          </label>
-
-          <label style="display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:12px">
-            <input
-              type="checkbox"
-              id="permissionCheck"
-              style="width:auto;margin-top:3px"
-            >
-            <span>
-              I own this media or have permission to download it.
-            </span>
-          </label>
-
-          <button
-            class="btn prepare-btn"
-            id="prepareButton"
-            type="button"
-          >
-            Prepare download
-          </button>
-
-          <section class="preview" id="previewSection">
-            <h3>Your video is ready</h3>
-
-            <video
-              id="videoPreview"
-              controls
-              playsinline
-              preload="metadata"
-            ></video>
-
-            <a
-              id="downloadButton"
-              class="btn download-btn"
-              href="#"
-            >
-              ↓ Download video
-            </a>
-
-            <p class="note">
-              The download is delivered through Vybemuse.
-              Keep this page open until the download starts.
-            </p>
-          </section>
-
-        </section>
-
-        <p class="note">
-          Only download media you own or have permission to save.
-          Availability and formats depend on VidFetch and the source.
-        </p>
-
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="features">
-    <div class="wrap">
-      <h2>How Vybemuse works</h2>
+  <div class="wrap">
+    <section class="section" id="genres">
+      <div class="section-heading">
+        <h2>Explore popular music genres</h2>
+        <p>Choose a genre to start discovering new sounds.</p>
+      </div>
 
-      <div class="feature-grid">
+      <div class="genre-grid">
+        <button class="genre" data-query="African music">
+          <span class="emoji">🌍</span>
+          <strong>African Music</strong>
+          <small>Sounds from across Africa</small>
+        </button>
+
+        <button class="genre" data-query="Rwandan music">
+          <span class="emoji">🇷🇼</span>
+          <strong>Rwandan Music</strong>
+          <small>Discover Rwanda's artists</small>
+        </button>
+
+        <button class="genre" data-query="Afrobeats">
+          <span class="emoji">🥁</span>
+          <strong>Afrobeats</strong>
+          <small>Rhythm and energy</small>
+        </button>
+
+        <button class="genre" data-query="Amapiano">
+          <span class="emoji">🎹</span>
+          <strong>Amapiano</strong>
+          <small>South African sounds</small>
+        </button>
+
+        <button class="genre" data-query="Hip hop music">
+          <span class="emoji">🎤</span>
+          <strong>Hip Hop</strong>
+          <small>Beats and fresh flows</small>
+        </button>
+
+        <button class="genre" data-query="R and B music">
+          <span class="emoji">💜</span>
+          <strong>R&B</strong>
+          <small>Soulful music</small>
+        </button>
+
+        <button class="genre" data-query="Gospel music">
+          <span class="emoji">🎶</span>
+          <strong>Gospel</strong>
+          <small>Music that inspires</small>
+        </button>
+
+        <button class="genre" data-query="Dancehall music">
+          <span class="emoji">🔥</span>
+          <strong>Dancehall</strong>
+          <small>High-energy rhythms</small>
+        </button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <h2>Why use Vybemuse?</h2>
+        <p>Music discovery with a simple experience.</p>
+      </div>
+
+      <div class="features">
         <article class="feature">
-          <strong>01. Paste a URL</strong>
-          <p>Enter a supported public video link.</p>
+          <h3>🌍 Discover new music</h3>
+          <p>Explore music from Rwanda, Africa and international artists.</p>
         </article>
 
         <article class="feature">
-          <strong>02. Fetch information</strong>
-          <p>See the available title, thumbnail, duration and formats.</p>
+          <h3>🔎 Search easily</h3>
+          <p>Search songs and artists across popular music services.</p>
         </article>
 
         <article class="feature">
-          <strong>03. Download</strong>
-          <p>Prepare your selected format and download it from Vybemuse.</p>
+          <h3>📥 Clear download steps</h3>
+          <p>Review media details, choose an available format and prepare permitted downloads.</p>
         </article>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <h2>Frequently asked questions</h2>
+        <p>Learn how Vybemuse works.</p>
+      </div>
+
+      <div class="faq-list">
+        <article class="faq-item">
+          <h3>How do I search for music?</h3>
+          <p>Choose Search music, enter a song, artist or genre, and select a music platform to view its results.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>How do I retrieve video information?</h3>
+          <p>Choose Paste video URL, enter a supported HTTPS link and select Find video information.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>How do I prepare a download?</h3>
+          <p>Review the information, choose an available format, confirm your permission and select Prepare my download.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>Can I download any video?</h3>
+          <p>No. Only use media you own, have licensed, or have explicit permission to download. Respect applicable platform terms and copyright rules.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>Does Vybemuse host music?</h3>
+          <p>Vybemuse helps users discover music and access supported media information. Search results on third-party platforms remain subject to those platforms' rules.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section about" id="about">
+      <div class="section-heading">
+        <h2>About Vybemuse</h2>
+      </div>
+
+      <p>
+        Vybemuse is a music discovery platform designed to make it
+        easier to explore African music, Rwandan artists, popular
+        genres and international sounds. Users can search popular
+        music platforms or retrieve information about supported
+        media links.
+      </p>
+    </section>
+  </div>
 </main>
 
 <footer>
-  <div class="wrap footer-row">
-    <a class="logo" href="/">VYBE<span>MUSE.</span></a>
-    <span>© <span id="year"></span> Vybemuse</span>
+  <div class="wrap footer-inner">
+    <div>
+      <a class="logo" href="/">VYBE<span>MUSE.</span></a>
+      <div>Discover music. Feel every vibe.</div>
+    </div>
+    <div>© <span id="year"></span> Vybemuse. All rights reserved.</div>
   </div>
 </footer>
 
 <script>
-const $ = (id) => document.getElementById(id);
+  const $ = id => document.getElementById(id);
 
-let currentVideoUrl = "";
-let currentJobId = "";
-let pollingTimer = null;
-let pollingStarted = 0;
+  let activeJob = null;
+  let pollTimer = null;
+  let currentVideo = null;
 
-function setStatus(message, type = "") {
-  const element = $("status");
+  function setMode(mode) {
+    const search = mode === "search";
 
-  element.textContent = message;
-  element.className = "status";
+    $("searchPanel").hidden = !search;
+    $("urlPanel").hidden = search;
 
-  if (type) {
-    element.classList.add(type);
-  }
-}
-
-function formatDuration(value) {
-  if (value === null || value === undefined || value === "") {
-    return "Duration unavailable";
+    $("searchMode").classList.toggle("active", search);
+    $("urlMode").classList.toggle("active", !search);
   }
 
-  if (typeof value === "string" && value.includes(":")) {
-    return `Duration: ${value}`;
-  }
+  $("searchMode").addEventListener("click", () => setMode("search"));
+  $("urlMode").addEventListener("click", () => setMode("url"));
 
-  const seconds = Number(value);
+  function showMusicResults(query) {
+    const encoded = encodeURIComponent(query);
 
-  if (!Number.isFinite(seconds) || seconds < 0) {
-    return "Duration unavailable";
-  }
+    const links = [
+      ["Search YouTube", `https://www.youtube.com/results?search_query=${encoded}`],
+      ["Search Spotify", `https://open.spotify.com/search/${encoded}`],
+      ["Search SoundCloud", `https://soundcloud.com/search?q=${encoded}`]
+    ];
 
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
+    const box = $("musicResults");
+    box.replaceChildren();
 
-  const time = hours
-    ? `${hours}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`
-    : `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+    const heading = document.createElement("strong");
+    heading.textContent = `Search results for "${query}"`;
 
-  return `Duration: ${time}`;
-}
+    const description = document.createElement("p");
+    description.textContent = "Choose where you want to explore this search.";
 
-function resetResult() {
-  clearTimeout(pollingTimer);
+    box.append(heading, description);
 
-  $("videoDetails").classList.remove("show");
-  $("previewSection").classList.remove("show");
-
-  $("videoPreview").pause();
-  $("videoPreview").removeAttribute("src");
-  $("videoPreview").load();
-
-  $("downloadButton").classList.remove("show");
-  $("downloadButton").removeAttribute("href");
-
-  $("thumbnail").removeAttribute("src");
-
-  currentJobId = "";
-}
-
-async function apiRequest(url, options = {}) {
-  const response = await fetch(url, options);
-
-  let data;
-
-  try {
-    data = await response.json();
-  } catch {
-    throw new Error("The server returned an invalid response.");
-  }
-
-  if (!response.ok || !data.success) {
-    throw new Error(data.message || "Something went wrong.");
-  }
-
-  return data;
-}
-
-/* =====================================
-   FETCH VIDEO INFORMATION
-===================================== */
-
-$("urlForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const url = $("videoUrl").value.trim();
-
-  if (!url) return;
-
-  resetResult();
-
-  currentVideoUrl = url;
-
-  const button = $("fetchButton");
-  button.disabled = true;
-  button.textContent = "Fetching...";
-
-  setStatus("Getting video information from VidFetch...");
-
-  try {
-    const data = await apiRequest("/api/video/info", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ url })
+    links.forEach(([label, url]) => {
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = label;
+      box.append(link);
     });
 
-    const video = data.video;
+    box.classList.add("show");
+  }
 
-    $("videoTitle").textContent = video.title || "Untitled video";
-    $("videoUploader").textContent =
-      video.uploader ? `Creator: ${video.uploader}` : "";
+  $("searchMusic").addEventListener("click", () => {
+    const query = $("musicQuery").value.trim();
 
-    $("videoDuration").textContent = formatDuration(video.duration);
+    if (!query) {
+      $("musicQuery").focus();
+      return;
+    }
 
-    $("videoSource").textContent =
-      video.source ? `Source: ${video.source}` : "";
+    showMusicResults(query);
+  });
 
-    if (video.thumbnail) {
-      const thumbnailUrl = new URL(video.thumbnail);
+  $("musicQuery").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      $("searchMusic").click();
+    }
+  });
 
-      if (thumbnailUrl.protocol === "https:") {
-        $("thumbnail").src = thumbnailUrl.href;
-      }
+  document.querySelectorAll("[data-query]").forEach(button => {
+    button.addEventListener("click", () => {
+      const query = button.dataset.query;
+      $("musicQuery").value = query;
+      setMode("search");
+      showMusicResults(query);
+      $("discover").scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  function safeHttpsUrl(value) {
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" ? url.href : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function readJson(response) {
+    const raw = await response.text();
+
+    try {
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      throw new Error("The server returned an invalid response.");
+    }
+  }
+
+  function unwrapVideo(payload) {
+    return payload?.video ||
+      payload?.data?.video ||
+      payload?.data ||
+      payload?.result ||
+      payload || {};
+  }
+
+  function normalizeFormats(video) {
+    const raw = video.formats ||
+      video.available_formats ||
+      video.download_formats ||
+      video.qualities ||
+      [];
+
+    if (!Array.isArray(raw)) return [];
+
+    const formats = raw.map(item => {
+      if (typeof item === "string") return item;
+
+      return item?.format ||
+        item?.quality ||
+        item?.label ||
+        (item?.height ? `${item.height}p` : "") ||
+        item?.id ||
+        "";
+    }).filter(Boolean);
+
+    return [...new Set(
+      formats.map(value => String(value).toLowerCase())
+    )].filter(value =>
+      /^(mp3|(?:144|240|360|480|720|1080|1440|2160)p)$/.test(value)
+    );
+  }
+
+  function resetDownloadArea() {
+    $("downloadArea").replaceChildren();
+    $("downloadArea").classList.remove("show");
+    $("permissionCheck").checked = false;
+    $("prepareDownload").disabled = true;
+  }
+
+  function showMediaInfo(payload) {
+    const video = unwrapVideo(payload);
+    currentVideo = video;
+
+    const title = video.title || video.name || "Media information retrieved";
+
+    $("videoTitle").textContent = title;
+
+    const details = [];
+
+    if (video.duration) details.push(`Duration: ${video.duration}`);
+    if (video.uploader || video.author || video.channel) {
+      details.push(`By: ${video.uploader || video.author || video.channel}`);
+    }
+
+    $("videoDetails").textContent = details.join(" · ") ||
+      "Review the information and choose an available format.";
+
+    const thumbnail = safeHttpsUrl(
+      video.thumbnail ||
+      video.thumbnail_url ||
+      video.thumbnailUrl ||
+      video.image ||
+      ""
+    );
+
+    if (thumbnail) {
+      $("videoThumbnail").src = thumbnail;
+      $("videoThumbnail").hidden = false;
+    } else {
+      $("videoThumbnail").removeAttribute("src");
+      $("videoThumbnail").hidden = true;
     }
 
     const select = $("formatSelect");
     select.replaceChildren();
 
-    const formats = Array.isArray(video.formats)
-      ? video.formats
-      : [];
+    const formats = normalizeFormats(video);
 
     if (!formats.length) {
-      throw new Error("VidFetch did not return available formats for this video.");
-    }
-
-    formats.forEach((format) => {
       const option = document.createElement("option");
-
-      option.value = format.value;
-      option.textContent =
-        format.label +
-        (format.size ? ` · ${format.size}` : "");
-
-      select.appendChild(option);
-    });
-
-    $("videoDetails").classList.add("show");
-
-    setStatus("Video information retrieved. Choose a format.", "success");
-
-    $("videoDetails").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-  } catch (error) {
-    setStatus(error.message, "error");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Fetch video";
-  }
-});
-
-/* =====================================
-   CREATE DOWNLOAD
-===================================== */
-
-$("prepareButton").addEventListener("click", async () => {
-  if (!currentVideoUrl) {
-    setStatus("Fetch a video first.", "error");
-    return;
-  }
-
-  if (!$("permissionCheck").checked) {
-    setStatus(
-      "Please confirm that you own or have permission to download this media.",
-      "error"
-    );
-    return;
-  }
-
-  const format = $("formatSelect").value;
-  const button = $("prepareButton");
-
-  button.disabled = true;
-  button.textContent = "Preparing...";
-
-  $("previewSection").classList.remove("show");
-  $("downloadButton").classList.remove("show");
-
-  setStatus("Sending download request to VidFetch...");
-
-  try {
-    const data = await apiRequest("/api/video/download", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        url: currentVideoUrl,
-        format,
-        authorized: true
-      })
-    });
-
-    currentJobId = data.job.id;
-    pollingStarted = Date.now();
-
-    setStatus(
-      `Download job created. Status: ${data.job.status}. Processing...`
-    );
-
-    pollDownload();
-
-  } catch (error) {
-    setStatus(error.message, "error");
-    button.disabled = false;
-    button.textContent = "Prepare download";
-  }
-});
-
-/* =====================================
-   CHECK JOB PROGRESS
-===================================== */
-
-async function pollDownload() {
-  if (!currentJobId) return;
-
-  if (Date.now() - pollingStarted > 10 * 60 * 1000) {
-    setStatus(
-      "Processing is taking longer than expected. You can try again later.",
-      "error"
-    );
-
-    $("prepareButton").disabled = false;
-    $("prepareButton").textContent = "Prepare download";
-    return;
-  }
-
-  try {
-    const data = await apiRequest(
-      `/api/video/status/${encodeURIComponent(currentJobId)}`
-    );
-
-    const job = data.job;
-    const status = String(job.status || "").toLowerCase();
-
-    if (status === "completed" && job.downloadReady) {
-      showReadyVideo(job);
-      return;
+      option.value = "";
+      option.textContent = "No formats were supplied by the provider";
+      select.append(option);
+      $("prepareDownload").disabled = true;
+    } else {
+      formats.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value.toUpperCase();
+        select.append(option);
+      });
     }
 
-    if (["failed", "error", "cancelled", "canceled"].includes(status)) {
-      setStatus(job.message || "VidFetch could not process this video.", "error");
-
-      $("prepareButton").disabled = false;
-      $("prepareButton").textContent = "Prepare download";
-      return;
-    }
-
-    setStatus(
-      `Your video is ${status || "processing"}. Please wait...`
-    );
-
-    pollingTimer = setTimeout(pollDownload, 3000);
-
-  } catch (error) {
-    setStatus(`${error.message} Retrying...`, "error");
-
-    pollingTimer = setTimeout(pollDownload, 5000);
-  }
-}
-
-/* =====================================
-   SHOW READY VIDEO AND DOWNLOAD BUTTON
-===================================== */
-
-function showReadyVideo(job) {
-  const previewUrl = job.previewUrl;
-
-  if (!previewUrl) {
-    setStatus("VidFetch completed but did not return a preview URL.", "error");
-    return;
+    resetDownloadArea();
+    $("mediaResult").classList.add("show");
   }
 
-  try {
-    const url = new URL(previewUrl);
-
-    if (url.protocol !== "https:") {
-      throw new Error("Invalid preview URL.");
-    }
-
-    $("videoPreview").src = url.href;
-    $("videoPreview").load();
-
-  } catch {
-    setStatus("The video preview URL is invalid.", "error");
-    return;
-  }
-
-  const downloadButton = $("downloadButton");
-
-  downloadButton.href =
-    `/api/video/file/${encodeURIComponent(currentJobId)}`;
-
-  downloadButton.setAttribute("download", "");
-
-  downloadButton.classList.add("show");
-  $("previewSection").classList.add("show");
-
-  $("prepareButton").disabled = false;
-  $("prepareButton").textContent = "Prepare another download";
-
-  setStatus("Your file is ready. You can preview and download it.", "success");
-
-  $("previewSection").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
+  $("permissionCheck").addEventListener("change", () => {
+    $("prepareDownload").disabled =
+      !$("permissionCheck").checked ||
+      !$("formatSelect").value ||
+      !currentVideo;
   });
-}
 
-/* =====================================
-   FOOTER
-===================================== */
+  $("formatSelect").addEventListener("change", () => {
+    $("prepareDownload").disabled =
+      !$("permissionCheck").checked ||
+      !$("formatSelect").value ||
+      !currentVideo;
+  });
 
-$("year").textContent = new Date().getFullYear();
+  $("findMedia").addEventListener("click", async () => {
+    const url = safeHttpsUrl($("mediaUrl").value.trim());
+
+    if (!url) {
+      $("mediaStatus").textContent =
+        "Please enter a valid HTTPS video URL.";
+      $("mediaUrl").focus();
+      return;
+    }
+
+    const button = $("findMedia");
+
+    button.disabled = true;
+    button.textContent = "Finding video...";
+    $("mediaStatus").textContent = "Retrieving video information...";
+    $("mediaResult").classList.remove("show");
+
+    try {
+      const response = await fetch("/api/video/info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+      });
+
+      const data = await readJson(response);
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not retrieve video information.");
+      }
+
+      showMediaInfo(data.video);
+
+      $("mediaStatus").textContent =
+        "Step 1 complete. Review the video and continue below.";
+    } catch (error) {
+      $("mediaStatus").textContent = error.message;
+    } finally {
+      button.disabled = false;
+      button.textContent = "Find video information";
+    }
+  });
+
+  $("prepareDownload").addEventListener("click", async () => {
+    if (!$("permissionCheck").checked) {
+      $("mediaStatus").textContent =
+        "Please confirm your permission before continuing.";
+      return;
+    }
+
+    if (!$("formatSelect").value) {
+      $("mediaStatus").textContent =
+        "No available format has been supplied by the provider.";
+      return;
+    }
+
+    if (activeJob) {
+      $("mediaStatus").textContent =
+        "A download is already being prepared.";
+      return;
+    }
+
+    const url = safeHttpsUrl($("mediaUrl").value.trim());
+
+    if (!url) {
+      $("mediaStatus").textContent = "Please check your video URL.";
+      return;
+    }
+
+    const button = $("prepareDownload");
+
+    button.disabled = true;
+    button.textContent = "Preparing...";
+    $("mediaStatus").textContent =
+      "Your file is being prepared. Please keep this page open.";
+
+    resetDownloadArea();
+
+    try {
+      const response = await fetch("/api/video/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url,
+          format: $("formatSelect").value,
+          authorized: true
+        })
+      });
+
+      const data = await readJson(response);
+
+      if (!response.ok || !data.success || !data.job?.id) {
+        throw new Error(data.message || "Could not prepare your file.");
+      }
+
+      activeJob = data.job.id;
+      button.textContent = "Preparing your file...";
+
+      pollJob(activeJob, button);
+    } catch (error) {
+      $("mediaStatus").textContent = error.message;
+      button.disabled = false;
+      button.textContent = "Prepare my download";
+    }
+  });
+
+  function showDownloadButton(jobId, button) {
+    const area = $("downloadArea");
+    area.replaceChildren();
+
+    const message = document.createElement("p");
+    message.textContent =
+      "Your file is ready. Use the button below to download it through Vybemuse.";
+
+    const link = document.createElement("a");
+    link.className = "btn";
+    link.href = `/api/video/file/${encodeURIComponent(jobId)}`;
+    link.textContent = "⬇ Download my file";
+    link.setAttribute("download", "");
+
+    link.addEventListener("click", () => {
+      $("mediaStatus").textContent =
+        "Your download request has started.";
+      button.disabled = false;
+      button.textContent = "Prepare another download";
+    });
+
+    area.append(message, link);
+    area.classList.add("show");
+  }
+
+  function pollJob(jobId, button) {
+    const started = Date.now();
+    const maxWait = 8 * 60 * 1000;
+
+    async function check() {
+      if (Date.now() - started > maxWait) {
+        $("mediaStatus").textContent =
+          "Processing is taking longer than expected. Please try again later.";
+        activeJob = null;
+        button.disabled = false;
+        button.textContent = "Try again";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/video/status/${encodeURIComponent(jobId)}`
+        );
+
+        const data = await readJson(response);
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Could not check progress.");
+        }
+
+        const job = data.job || {};
+        const status = String(job.status || "unknown").toLowerCase();
+
+        if (["completed", "complete", "succeeded", "success"].includes(status)) {
+          activeJob = null;
+
+          if (!job.downloadReady) {
+            $("mediaStatus").textContent =
+              "The provider completed the job but has not supplied a download file.";
+            button.disabled = false;
+            button.textContent = "Try again";
+            return;
+          }
+
+          $("mediaStatus").textContent = "Your file is ready!";
+          showDownloadButton(jobId, button);
+          button.textContent = "Prepare another download";
+          return;
+        }
+
+        if (["failed", "error", "cancelled", "canceled"].includes(status)) {
+          activeJob = null;
+          $("mediaStatus").textContent =
+            job.message || `The provider reported: ${status}.`;
+          button.disabled = false;
+          button.textContent = "Try again";
+          return;
+        }
+
+        $("mediaStatus").textContent =
+          `Step 4 – Preparing your file: ${status}. Please wait...`;
+
+        pollTimer = setTimeout(check, 3500);
+      } catch (error) {
+        $("mediaStatus").textContent =
+          `${error.message} Checking again shortly...`;
+        pollTimer = setTimeout(check, 5000);
+      }
+    }
+
+    check();
+  }
+
+  $("year").textContent = new Date().getFullYear();
 </script>
-
 </body>
 </html>
