@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const express = require("express");
@@ -7,6 +8,7 @@ const path = require("node:path");
 const { Readable, Transform } = require("node:stream");
 const { pipeline } = require("node:stream/promises");
 const net = require("node:net");
+const crypto = require("node:crypto");
 
 const app = express();
 
@@ -18,18 +20,15 @@ const SITE_URL = (
 ).replace(/\/+$/, "");
 
 const MAX_FILE_BYTES = 512 * 1024 * 1024;
+const INFO_TIMEOUT = 30 * 60 * 1000;
+const INFO_JOB_LIFETIME = 35 * 60 * 1000;
 const JOB_ID_PATTERN = /^dl_[a-zA-Z0-9_-]{4,100}$/;
 
+const infoJobs = new Map();
+
 const ALLOWED_FORMATS = new Set([
-  "144p",
-  "240p",
-  "360p",
-  "480p",
-  "720p",
-  "1080p",
-  "1440p",
-  "2160p",
-  "mp3"
+  "144p", "240p", "360p", "480p", "720p",
+  "1080p", "1440p", "2160p", "mp3"
 ]);
 
 const SUPPORTED_HOSTS = new Set([
@@ -81,9 +80,10 @@ app.use(helmet({
 
 app.use(express.json({ limit: "12kb" }));
 
+// Allow frequent status checks during the 30-minute diagnostic test.
 app.use("/api", rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 40,
+  limit: 500,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   message: {
@@ -151,7 +151,7 @@ async function vidfetch(endpoint, options = {}) {
 
   const method = options.method || "GET";
   const body = options.body;
-  const timeoutMs = options.timeoutMs || 45000;
+  const timeoutMs = options.timeoutMs ?? INFO_TIMEOUT;
 
   const controller = new AbortController();
   const timeout = setTimeout(
@@ -205,9 +205,9 @@ async function vidfetch(endpoint, options = {}) {
         safeMessage(message, "VidFetch request failed.")
       );
 
-      error.status = [400, 401, 402, 403, 404, 422, 429].includes(
-        response.status
-      )
+      error.status = [
+        400, 401, 402, 403, 404, 422, 429
+      ].includes(response.status)
         ? response.status
         : 502;
 
@@ -223,7 +223,7 @@ async function vidfetch(endpoint, options = {}) {
   } catch (error) {
     if (error.name === "AbortError") {
       const timeoutError = new Error(
-        "VidFetch took too long to respond. Please try again."
+        "Vybemuse waited 30 minutes, but VidFetch did not respond."
       );
 
       timeoutError.status = 504;
@@ -270,7 +270,7 @@ async function getProviderJob(jobId) {
     `/v1/downloads/${encodeURIComponent(jobId)}`,
     {
       method: "GET",
-      timeoutMs: 1200000
+      timeoutMs: 30000
     }
   );
 
@@ -372,9 +372,9 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
-/* Retrieve media information */
+/* Start background media-information lookup */
 
-app.post("/api/video/info", async (req, res) => {
+app.post("/api/video/info", (req, res) => {
   const url = validateMediaUrl(req.body?.url);
 
   if (!url) {
@@ -384,26 +384,96 @@ app.post("/api/video/info", async (req, res) => {
     });
   }
 
-  try {
-    const data = await vidfetch("/v1/info", {
-      method: "POST",
-      body: { url },
-      timeoutMs: 300000
-    });
-
-    const media = unwrapProviderObject(data);
-
-    return res.json({
-      success: true,
-      video: media
-    });
-  } catch (error) {
-    return sendApiError(
-      res,
-      error,
-      "Could not retrieve media information."
-    );
+  // Remove expired jobs.
+  for (const [id, job] of infoJobs.entries()) {
+    if (Date.now() - job.createdAt > INFO_JOB_LIFETIME) {
+      infoJobs.delete(id);
+    }
   }
+
+  const id = `info_${crypto.randomUUID()}`;
+
+  infoJobs.set(id, {
+    status: "processing",
+    createdAt: Date.now(),
+    video: null,
+    error: null
+  });
+
+  // Respond immediately. The provider request runs separately.
+  res.status(202).json({
+    success: true,
+    job: {
+      id,
+      status: "processing"
+    }
+  });
+
+  (async () => {
+    try {
+      console.log(`[Info job] ${id} started`);
+
+      const data = await vidfetch("/v1/info", {
+        method: "POST",
+        body: { url },
+        timeoutMs: INFO_TIMEOUT
+      });
+
+      const media = unwrapProviderObject(data);
+
+      infoJobs.set(id, {
+        status: "completed",
+        createdAt: Date.now(),
+        video: media,
+        error: null
+      });
+
+      console.log(`[Info job] ${id} completed`);
+    } catch (error) {
+      infoJobs.set(id, {
+        status: "failed",
+        createdAt: Date.now(),
+        video: null,
+        error: safeMessage(
+          error.message,
+          "Could not retrieve media information."
+        )
+      });
+
+      console.error(`[Info job] ${id} failed: ${error.message}`);
+    }
+  })();
+});
+
+/* Check background information lookup */
+
+app.get("/api/video/info/:id", (req, res) => {
+  const job = infoJobs.get(req.params.id);
+
+  if (!job) {
+    return res.status(404).json({
+      success: false,
+      message: "Information job not found. Please submit the URL again."
+    });
+  }
+
+  if (Date.now() - job.createdAt > INFO_JOB_LIFETIME) {
+    infoJobs.delete(req.params.id);
+
+    return res.status(410).json({
+      success: false,
+      message: "This information job has expired."
+    });
+  }
+
+  return res.json({
+    success: true,
+    job: {
+      status: job.status,
+      video: job.video,
+      message: job.error
+    }
+  });
 });
 
 /* Create a download job */
@@ -515,7 +585,8 @@ app.get("/api/video/status/:id", async (req, res) => {
         format: job.format || null,
         title: job.title || null,
         progress: job.progress ?? null,
-        downloadReady: status === "completed" && Boolean(downloadUrl),
+        downloadReady:
+          status === "completed" && Boolean(downloadUrl),
         message: providerError
       }
     });
@@ -528,7 +599,7 @@ app.get("/api/video/status/:id", async (req, res) => {
   }
 });
 
-/* Stream the completed file through Vybemuse */
+/* Stream completed file through Vybemuse */
 
 app.get("/api/video/file/:id", async (req, res) => {
   const jobId = req.params.id;
@@ -556,16 +627,12 @@ app.get("/api/video/file/:id", async (req, res) => {
 
     if (!downloadUrl) {
       return res.status(502).send(
-        "VidFetch did not provide a valid download URL. Check the job destination and status."
+        "VidFetch did not provide a valid download URL."
       );
     }
 
     controller = new AbortController();
 
-    /*
-     * This server-side request follows CDN redirects when necessary.
-     * The visitor still downloads from the Vybemuse URL, not the CDN URL.
-     */
     const upstream = await fetch(downloadUrl, {
       method: "GET",
       redirect: "follow",
@@ -606,9 +673,10 @@ app.get("/api/video/file/:id", async (req, res) => {
       );
     }
 
-    const extension = String(job.format || "").toLowerCase() === "mp3"
-      ? "mp3"
-      : "mp4";
+    const extension =
+      String(job.format || "").toLowerCase() === "mp3"
+        ? "mp3"
+        : "mp4";
 
     const filename = safeFilename(
       job.title || job.filename || `vybemuse-${jobId}`,
