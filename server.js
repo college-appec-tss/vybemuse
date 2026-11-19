@@ -251,6 +251,56 @@ app.use("/api", (req, res) => {
   });
 });
 
+app.get("/api/vidfetch-test", async (req, res) => {
+  const started = Date.now();
+
+  try {
+    if (!VIDFETCH_KEY) {
+      return res.status(500).json({
+        success: false,
+        message: "VIDFETCH_API_KEY is missing in Render."
+      });
+    }
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 10000);
+
+    try {
+      const response = await fetch(VIDFETCH_API, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${VIDFETCH_KEY}`
+        },
+        signal: controller.signal
+      });
+
+      const body = await response.text();
+
+      return res.status(200).json({
+        success: true,
+        httpStatus: response.status,
+        responseTime: Date.now() - started,
+        responsePreview: body.slice(0, 300)
+      });
+
+    } finally {
+      clearTimeout(timeout);
+    }
+
+  } catch (error) {
+    return res.status(502).json({
+      success: false,
+      error: error.name,
+      message: error.message,
+      responseTime: Date.now() - started
+    });
+  }
+});
+
+
 // Start application.
 app.listen(PORT, () => {
   console.log("--------------------------------");
