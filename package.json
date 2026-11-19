@@ -2,21 +2,12 @@
 {
   "name": "vybemuse",
   "version": "1.0.0",
-  "description": "Vybemuse - Discover music, artists and authorized video downloads.",
+  "description": "Vybemuse Music Discovery Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
-  "keywords": [
-    "vybemuse",
-    "music-discovery",
-    "african-music",
-    "rwandan-music",
-    "video-downloader"
-  ],
-  "author": "Vybemuse",
-  "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },
