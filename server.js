@@ -2,27 +2,45 @@
 require("dotenv").config();
 
 const express = require("express");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
 const path = require("path");
 const { Readable } = require("node:stream");
 const { pipeline } = require("node:stream/promises");
-const net = require("node:net");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-const PORT = Number(process.env.PORT) || 3000;
-const API_BASE = "https://api.vidfetch.dev";
 const API_KEY = process.env.VIDFETCH_API_KEY;
+const API_BASE = "https://api.vidfetch.dev";
 
-const SITE_URL = (
-  process.env.SITE_URL || "https://vybemuse.onrender.com"
-).replace(/\/+$/, "");
+app.disable("x-powered-by");
+app.use(express.json({ limit: "10kb" }));
 
-const DOWNLOAD_TIMEOUT = 10 * 60 * 1000;
-const JOB_ID_PATTERN = /^dl_[a-zA-Z0-9_-]{4,100}$/;
+// Basic API request limiting.
+const requestCounts = new Map();
 
-const ALLOWED_HOSTS = new Set([
+app.use("/api", (req, res, next) => {
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const now = Date.now();
+  const current = requestCounts.get(ip);
+
+  if (!current || now - current.start > 60 * 1000) {
+    requestCounts.set(ip, { start: now, count: 1 });
+    return next();
+  }
+
+  current.count++;
+
+  if (current.count > 20) {
+    return res.status(429).json({
+      success: false,
+      message: "Too many requests. Please wait a minute."
+    });
+  }
+
+  next();
+});
+
+const SUPPORTED_HOSTS = [
   "youtube.com",
   "www.youtube.com",
   "m.youtube.com",
@@ -37,66 +55,9 @@ const ALLOWED_HOSTS = new Set([
   "www.instagram.com",
   "vimeo.com",
   "www.vimeo.com"
-]);
+];
 
-const ALLOWED_FORMATS = new Set([
-  "144p",
-  "240p",
-  "360p",
-  "480p",
-  "720p",
-  "1080p",
-  "1440p",
-  "2160p",
-  "mp3"
-]);
-
-app.disable("x-powered-by");
-app.set("trust proxy", 1);
-
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        baseUri: ["'self'"],
-        formAction: ["'self'"],
-        frameAncestors: ["'none'"],
-        objectSrc: ["'none'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "https://fonts.googleapis.com"
-        ],
-        fontSrc: [
-          "'self'",
-          "https://fonts.gstatic.com",
-          "data:"
-        ],
-        imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'"]
-      }
-    },
-    crossOriginEmbedderPolicy: false
-  })
-);
-
-app.use(express.json({ limit: "12kb" }));
-
-app.use(
-  "/api",
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 40,
-    standardHeaders: "draft-8",
-    legacyHeaders: false
-  })
-);
-
-/* -----------------------------
-   Utility functions
------------------------------ */
+const JOB_ID_PATTERN = /^dl_[a-zA-Z0-9_-]{4,100}$/;
 
 function validateVideoUrl(value) {
   if (typeof value !== "string" || value.length > 2048) {
@@ -107,8 +68,11 @@ function validateVideoUrl(value) {
     const url = new URL(value.trim());
 
     if (url.protocol !== "https:") return null;
-    if (!ALLOWED_HOSTS.has(url.hostname.toLowerCase())) return null;
     if (url.username || url.password || url.port) return null;
+
+    const hostname = url.hostname.toLowerCase();
+
+    if (!SUPPORTED_HOSTS.includes(hostname)) return null;
 
     return url.href;
   } catch {
@@ -120,36 +84,40 @@ function validJobId(id) {
   return typeof id === "string" && JOB_ID_PATTERN.test(id);
 }
 
-function apiError(res, error, fallback) {
-  console.error("[Vybemuse API]", error.message);
+async function vidfetch(endpoint, options = {}) {
+  if (!API_KEY) {
+    const error = new Error("VidFetch API key is not configured.");
+    error.status = 503;
+    throw error;
+  }
 
-  const status = Number(error.status) || 502;
-
-  return res.status(status).json({
-    success: false,
-    message: error.message || fallback
+  const response = await fetch(`${API_BASE}${endpoint}`, {
+    method: options.method || "GET",
+    headers: {
+      Authorization: `Bearer ${API_KEY}`,
+      Accept: "application/json",
+      ...(options.body ? { "Content-Type": "application/json" } : {})
+    },
+    ...(options.body ? { body: JSON.stringify(options.body) } : {}),
+    redirect: "error",
+    signal: AbortSignal.timeout(options.timeout || 45000)
   });
-}
 
-async function readProviderResponse(response) {
-  const text = await response.text();
+  const raw = await response.text();
 
-  let data = {};
+  let data;
 
-  if (text) {
-    try {
-      data = JSON.parse(text);
-    } catch {
-      throw new Error("VidFetch returned an invalid response.");
-    }
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch {
+    throw new Error("VidFetch returned an invalid response.");
   }
 
   if (!response.ok) {
     const error = new Error(
-      data.error_message ||
       data.message ||
       data.error ||
-      `VidFetch returned HTTP ${response.status}.`
+      `VidFetch request failed (${response.status}).`
     );
 
     error.status = response.status === 429 ? 429 : 502;
@@ -159,205 +127,18 @@ async function readProviderResponse(response) {
   return data;
 }
 
-async function vidfetch(endpoint, options = {}) {
-  if (!API_KEY) {
-    const error = new Error("The media service is not configured.");
-    error.status = 503;
-    throw error;
-  }
+function apiError(res, error) {
+  console.error("[VidFetch]", error.message);
 
-  const controller = new AbortController();
-
-  const timeout = setTimeout(
-    () => controller.abort(),
-    options.timeout || 45000
-  );
-
-  try {
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      method: options.method || "GET",
-      redirect: "error",
-      signal: controller.signal,
-      headers: {
-        Authorization: `Bearer ${API_KEY}`,
-        Accept: "application/json",
-        ...(options.body
-          ? { "Content-Type": "application/json" }
-          : {})
-      },
-      ...(options.body
-        ? { body: JSON.stringify(options.body) }
-        : {})
-    });
-
-    return await readProviderResponse(response);
-  } catch (error) {
-    if (error.name === "AbortError") {
-      const timeoutError = new Error(
-        "VidFetch took too long to respond. Please try again."
-      );
-
-      timeoutError.status = 504;
-      throw timeoutError;
-    }
-
-    throw error;
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-/* -----------------------------
-   Download URL validation
------------------------------ */
-
-function isPrivateIPv4(ip) {
-  const parts = ip.split(".").map(Number);
-
-  if (
-    parts.length !== 4 ||
-    parts.some((part) => !Number.isInteger(part) || part < 0 || part > 255)
-  ) {
-    return true;
-  }
-
-  const [a, b] = parts;
-
-  return (
-    a === 0 ||
-    a === 10 ||
-    a === 127 ||
-    a >= 224 ||
-    (a === 169 && b === 254) ||
-    (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 168) ||
-    (a === 100 && b >= 64 && b <= 127) ||
-    (a === 198 && (b === 18 || b === 19))
-  );
-}
-
-function isPrivateIPv6(ip) {
-  const value = ip.toLowerCase();
-
-  return (
-    value === "::" ||
-    value === "::1" ||
-    value.startsWith("fc") ||
-    value.startsWith("fd") ||
-    value.startsWith("fe8") ||
-    value.startsWith("fe9") ||
-    value.startsWith("fea") ||
-    value.startsWith("feb")
-  );
-}
-
-function validateDownloadUrl(value) {
-  if (typeof value !== "string" || value.length > 4096) {
-    throw new Error("Invalid download URL.");
-  }
-
-  let url;
-
-  try {
-    url = new URL(value);
-  } catch {
-    throw new Error("The provider returned an invalid download URL.");
-  }
-
-  if (url.protocol !== "https:") {
-    throw new Error("The provider returned an insecure download URL.");
-  }
-
-  if (url.username || url.password || url.port) {
-    throw new Error("The provider returned an unsupported download URL.");
-  }
-
-  const hostname = url.hostname.toLowerCase();
-  const ipVersion = net.isIP(hostname);
-
-  if (ipVersion === 4 && isPrivateIPv4(hostname)) {
-    throw new Error("The provider returned an invalid download host.");
-  }
-
-  if (ipVersion === 6 && isPrivateIPv6(hostname)) {
-    throw new Error("The provider returned an invalid download host.");
-  }
-
-  if (
-    hostname === "localhost" ||
-    hostname.endsWith(".localhost") ||
-    hostname.endsWith(".local") ||
-    hostname.endsWith(".internal")
-  ) {
-    throw new Error("The provider returned an invalid download host.");
-  }
-
-  return url;
-}
-
-/* -----------------------------
-   Website files
------------------------------ */
-
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.use(
-  express.static(__dirname, {
-    index: false,
-    maxAge: "7d",
-    setHeaders(res, filePath) {
-      if (filePath.endsWith(".html")) {
-        res.setHeader("Cache-Control", "no-cache");
-      }
-    }
-  })
-);
-
-/* -----------------------------
-   SEO
------------------------------ */
-
-app.get("/robots.txt", (_req, res) => {
-  res.type("text/plain").send(
-    `User-agent: *
-Allow: /
-Disallow: /api/
-Sitemap: ${SITE_URL}/sitemap.xml
-`
-  );
-});
-
-app.get("/sitemap.xml", (_req, res) => {
-  res.type("application/xml").send(
-    `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${SITE_URL}/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>`
-  );
-});
-
-/* -----------------------------
-   Health check
------------------------------ */
-
-app.get("/api/health", (_req, res) => {
-  res.json({
-    success: true,
-    service: "Vybemuse",
-    status: "online",
-    providerConfigured: Boolean(API_KEY)
+  return res.status(error.status || 502).json({
+    success: false,
+    message: error.message || "VidFetch service error."
   });
-});
+}
 
-/* -----------------------------
-   Retrieve video information
------------------------------ */
+/* =====================================
+   1. FETCH VIDEO INFORMATION
+===================================== */
 
 app.post("/api/video/info", async (req, res) => {
   const url = validateVideoUrl(req.body?.url);
@@ -370,56 +151,99 @@ app.post("/api/video/info", async (req, res) => {
   }
 
   try {
-    const data = await vidfetch("/v1/info", {
+    const response = await vidfetch("/v1/info", {
       method: "POST",
       body: { url },
       timeout: 60000
     });
 
+    const video = response.video || response;
+
+    const formats = Array.isArray(video.formats)
+      ? video.formats.map((item) => {
+          if (typeof item === "string") {
+            return {
+              value: item,
+              label: item.toUpperCase()
+            };
+          }
+
+          const label = String(
+            item.label ||
+            item.format ||
+            item.quality ||
+            item.id ||
+            ""
+          );
+
+          let value = String(
+            item.format ||
+            item.quality ||
+            item.label ||
+            item.id ||
+            ""
+          );
+
+          if (/^\d+$/.test(value)) {
+            value += "p";
+          }
+
+          return {
+            value,
+            label: label || value,
+            type: item.type || "",
+            size: item.filesize_str || item.size || null
+          };
+        }).filter((item) => item.value)
+      : [];
+
     return res.json({
       success: true,
-      video: data.video || data
+      video: {
+        title: video.title || video.name || "Untitled video",
+        thumbnail: video.thumbnail || video.thumbnail_url || null,
+        duration: video.duration ?? null,
+        uploader: video.uploader || video.channel || "",
+        source: video.source || "",
+        formats
+      }
     });
   } catch (error) {
-    return apiError(
-      res,
-      error,
-      "Could not retrieve video information."
-    );
+    return apiError(res, error);
   }
 });
 
-/* -----------------------------
-   Create download job
------------------------------ */
+/* =====================================
+   2. CREATE DOWNLOAD JOB
+===================================== */
 
 app.post("/api/video/download", async (req, res) => {
   const url = validateVideoUrl(req.body?.url);
-  const format = req.body?.format;
+  const format = String(req.body?.format || "").trim();
 
   if (!url) {
     return res.status(400).json({
       success: false,
-      message: "Enter a valid supported HTTPS video URL."
+      message: "Invalid video URL."
     });
   }
 
-  if (!ALLOWED_FORMATS.has(format)) {
+  if (!format || !/^(144p|240p|360p|480p|720p|1080p|1440p|2160p|mp3)$/i.test(format)) {
     return res.status(400).json({
       success: false,
-      message: "Select a supported video format."
+      message: "Choose a supported format."
     });
   }
 
   if (req.body?.authorized !== true) {
     return res.status(403).json({
       success: false,
-      message: "Confirm that you own this media or have permission to download it."
+      message: "Please confirm that you own or have permission to download this media."
     });
   }
 
   try {
-    const data = await vidfetch("/v1/downloads", {
+    const response = await vidfetch("/v1/downloads", {
       method: "POST",
       body: {
         url,
@@ -428,38 +252,26 @@ app.post("/api/video/download", async (req, res) => {
       timeout: 60000
     });
 
-    if (!validJobId(data.id)) {
-      console.error(
-        "[VidFetch] Unexpected job response:",
-        JSON.stringify(data).slice(0, 1000)
-      );
-
-      return res.status(502).json({
-        success: false,
-        message: "VidFetch did not return a valid download job ID."
-      });
+    if (!validJobId(response.id)) {
+      throw new Error("VidFetch did not return a valid download job ID.");
     }
 
     return res.status(202).json({
       success: true,
       job: {
-        id: data.id,
-        status: data.status || "queued",
-        format: data.format || format
+        id: response.id,
+        status: response.status || "queued",
+        format: response.format || format
       }
     });
   } catch (error) {
-    return apiError(
-      res,
-      error,
-      "Could not create the download job."
-    );
+    return apiError(res, error);
   }
 });
 
-/* -----------------------------
-   Check job status
------------------------------ */
+/* =====================================
+   3. CHECK DOWNLOAD STATUS
+===================================== */
 
 app.get("/api/video/status/:id", async (req, res) => {
   const id = req.params.id;
@@ -467,45 +279,41 @@ app.get("/api/video/status/:id", async (req, res) => {
   if (!validJobId(id)) {
     return res.status(400).json({
       success: false,
-      message: "Invalid download job ID."
+      message: "Invalid download ID."
     });
   }
 
   try {
-    const data = await vidfetch(
+    const response = await vidfetch(
       `/v1/downloads/${encodeURIComponent(id)}`,
       { timeout: 30000 }
     );
 
-    const status = String(data.status || "unknown").toLowerCase();
+    const status = String(response.status || "unknown").toLowerCase();
 
     return res.json({
       success: true,
       job: {
-        id: data.id || id,
+        id: response.id || id,
         status,
-        format: data.format || null,
-        message: data.error_message || data.message || null,
-
-        // The signed URL stays on the server.
-        // The browser uses our own download endpoint.
-        downloadReady: Boolean(
-          status === "completed" && data.download_url
-        )
+        format: response.format || "",
+        message: response.message || response.error_message || "",
+        downloadReady: status === "completed" &&
+          typeof response.download_url === "string",
+        previewUrl: status === "completed" &&
+          typeof response.download_url === "string"
+          ? response.download_url
+          : null
       }
     });
   } catch (error) {
-    return apiError(
-      res,
-      error,
-      "Could not check download progress."
-    );
+    return apiError(res, error);
   }
 });
 
-/* -----------------------------
-   Stream file through Vybemuse
------------------------------ */
+/* =====================================
+   4. STREAM FILE THROUGH VYBEMUSE
+===================================== */
 
 app.get("/api/video/file/:id", async (req, res) => {
   const id = req.params.id;
@@ -513,142 +321,118 @@ app.get("/api/video/file/:id", async (req, res) => {
   if (!validJobId(id)) {
     return res.status(400).json({
       success: false,
-      message: "Invalid download job ID."
+      message: "Invalid download ID."
     });
   }
 
-  let upstream;
-
-  const controller = new AbortController();
-
-  const timeout = setTimeout(
-    () => controller.abort(),
-    DOWNLOAD_TIMEOUT
-  );
-
   try {
-    // First, check whether VidFetch has finished processing.
+    // Get the signed URL directly from VidFetch.
     const job = await vidfetch(
       `/v1/downloads/${encodeURIComponent(id)}`,
       { timeout: 30000 }
     );
 
-    const status = String(job.status || "").toLowerCase();
-
-    if (["failed", "error", "cancelled", "canceled"].includes(status)) {
-      return res.status(422).json({
-        success: false,
-        message: job.error_message || job.message || "The download failed."
-      });
-    }
-
-    if (status !== "completed" || !job.download_url) {
+    if (
+      String(job.status).toLowerCase() !== "completed" ||
+      !job.download_url
+    ) {
       return res.status(409).json({
         success: false,
-        message: "Your file is still processing. Please try again shortly.",
-        status: status || "processing"
+        message: "Your file is not ready yet."
       });
     }
 
-    // Validate the signed URL returned by VidFetch.
-    const downloadUrl = validateDownloadUrl(job.download_url);
+    let downloadUrl;
 
-    // Forward browser range requests when supported by the provider.
-    const headers = {};
-
-    if (req.headers.range) {
-      headers.Range = req.headers.range;
+    try {
+      downloadUrl = new URL(job.download_url);
+    } catch {
+      throw new Error("VidFetch returned an invalid download URL.");
     }
 
-    // Fetch the file on the server.
-    // Redirects are disabled to avoid forwarding requests to unknown hosts.
-    upstream = await fetch(downloadUrl, {
-      method: "GET",
-      headers,
+    if (
+      downloadUrl.protocol !== "https:" ||
+      downloadUrl.username ||
+      downloadUrl.password ||
+      downloadUrl.port
+    ) {
+      throw new Error("Unsupported download URL.");
+    }
+
+    // This URL comes from the authenticated VidFetch API,
+    // not from a URL supplied by the website visitor.
+    const upstream = await fetch(downloadUrl, {
       redirect: "error",
-      signal: controller.signal
+      signal: AbortSignal.timeout(10 * 60 * 1000)
     });
 
     if (!upstream.ok || !upstream.body) {
-      throw new Error(
-        `Could not retrieve the file from the provider (HTTP ${upstream.status}).`
-      );
+      throw new Error("Unable to retrieve the prepared file.");
     }
 
-    const contentType =
-      upstream.headers.get("content-type") || "application/octet-stream";
-
-    const contentLength = upstream.headers.get("content-length");
-    const contentRange = upstream.headers.get("content-range");
-    const acceptRanges = upstream.headers.get("accept-ranges");
-
-    // Build a safe filename.
-    const extension = job.format === "mp3" ? "mp3" : "mp4";
+    const isMp3 = String(job.format || "").toLowerCase() === "mp3";
+    const extension = isMp3 ? "mp3" : "mp4";
     const filename = `vybemuse-${id}.${extension}`;
 
     res.status(upstream.status);
-
-    res.setHeader("Content-Type", contentType);
+    res.setHeader(
+      "Content-Type",
+      isMp3 ? "audio/mpeg" :
+      upstream.headers.get("content-type") || "video/mp4"
+    );
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`
+      `attachment; filename="${filename}"`
     );
-
     res.setHeader("Cache-Control", "private, no-store");
     res.setHeader("X-Content-Type-Options", "nosniff");
+
+    const contentLength = upstream.headers.get("content-length");
 
     if (contentLength) {
       res.setHeader("Content-Length", contentLength);
     }
 
-    if (contentRange) {
-      res.setHeader("Content-Range", contentRange);
-    }
-
-    if (acceptRanges) {
-      res.setHeader("Accept-Ranges", acceptRanges);
-    }
-
-    // Stream instead of loading the entire video into server memory.
-    await pipeline(
-      Readable.fromWeb(upstream.body),
-      res
-    );
-
+    await pipeline(Readable.fromWeb(upstream.body), res);
   } catch (error) {
-    if (error.name === "AbortError") {
-      console.error("[Download] Streaming timeout.");
-
-      if (!res.headersSent) {
-        res.status(504).json({
-          success: false,
-          message: "The download took too long. Please try again."
-        });
-      } else {
-        res.destroy(error);
-      }
-
-      return;
-    }
-
-    console.error("[Download streaming error]", error.message);
+    console.error("[File download]", error.message);
 
     if (!res.headersSent) {
-      res.status(502).json({
+      return res.status(502).json({
         success: false,
-        message: "Unable to stream this file. Please try again."
+        message: "Could not download the file. Please try again."
       });
-    } else {
-      res.destroy(error);
     }
-  } finally {
-    clearTimeout(timeout);
+
+    res.destroy(error);
   }
 });
 
-/* -----------------------------
-   Unknown API routes
------------------------------ */
+/* =====================================
+   5. HEALTH CHECK
+===================================== */
+
+app.get("/api/health", (_req, res) => {
+  res.json({
+    success: true,
+    service: "Vybemuse",
+    status: "online",
+    vidfetchConfigured: Boolean(API_KEY)
+  });
+});
+
+/* =====================================
+   6. WEBSITE
+===================================== */
+
+app.use(express.static(__dirname, {
+  index: false,
+  dotfiles: "ignore"
+}));
+
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 app.use("/api", (_req, res) => {
   res.status(404).json({
@@ -657,31 +441,7 @@ app.use("/api", (_req, res) => {
   });
 });
 
-/* -----------------------------
-   General error handler
------------------------------ */
-
-app.use((error, _req, res, _next) => {
-  console.error("[Server error]", error.message);
-
-  if (res.headersSent) {
-    return res.destroy(error);
-  }
-
-  return res.status(500).json({
-    success: false,
-    message: "An unexpected server error occurred."
-  });
-});
-
-/* -----------------------------
-   Start server
------------------------------ */
-
 app.listen(PORT, () => {
   console.log(`Vybemuse running on port ${PORT}`);
-
-  console.log(
-    `VidFetch API key: ${API_KEY ? "configured" : "missing"}`
-  );
+  console.log(`VidFetch API: ${API_KEY ? "configured" : "missing API key"}`);
 });
