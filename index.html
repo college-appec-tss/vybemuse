@@ -589,26 +589,27 @@
   });
 
 
+
 infoButton.addEventListener("click", async function () {
   const mediaUrl = urlInput.value.trim();
 
   if (!mediaUrl) {
-    status.textContent = "Please paste a media URL first.";
+    status.textContent = "Please paste a video URL first.";
     return;
   }
 
   try {
     const parsedUrl = new URL(mediaUrl);
 
-    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-      throw new Error("Invalid media URL");
+    if (parsedUrl.protocol !== "https:") {
+      throw new Error("Please use a secure HTTPS video URL.");
     }
 
     infoButton.disabled = true;
     infoButton.textContent = "Searching...";
-    status.textContent = "Connecting to Vybemuse server...";
+    status.textContent = "Connecting to Vybemuse...";
 
-    const response = await fetch("/api/media", {
+    const response = await fetch("/api/video/info", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -620,35 +621,105 @@ infoButton.addEventListener("click", async function () {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || "Unable to retrieve media.");
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message || "Unable to retrieve video."
+      );
     }
 
+    const video = data.video;
+
     showResults(
-      data.title || "Media found",
-      data.message || "Your media is ready.",
+      video.title || "Video found",
+      "Video information retrieved successfully.",
       []
     );
 
-    // Show download button only when the backend provides
-    // an authorized download URL.
-    if (data.downloadUrl) {
-      const downloadButton = document.createElement("a");
+    // Display video thumbnail if available.
+    if (video.thumbnail) {
+      const thumbnail = document.createElement("img");
+      thumbnail.src = video.thumbnail;
+      thumbnail.alt = video.title || "Video thumbnail";
+      thumbnail.style.width = "100%";
+      thumbnail.style.maxWidth = "400px";
+      thumbnail.style.borderRadius = "12px";
+      thumbnail.style.marginTop = "15px";
 
-      downloadButton.href = data.downloadUrl;
-      downloadButton.textContent = "⬇ Download Media";
-      downloadButton.className = "primary";
-      downloadButton.style.display = "inline-block";
-      downloadButton.style.marginTop = "20px";
-
-      resultLinks.appendChild(downloadButton);
+      resultLinks.appendChild(thumbnail);
     }
 
-    status.textContent = "Media request completed successfully.";
+    // Display the download controls.
+    const downloadButton = document.createElement("button");
+
+    downloadButton.className = "primary";
+    downloadButton.textContent = "⬇ Download Video";
+    downloadButton.style.marginTop = "20px";
+
+    downloadButton.addEventListener("click", async () => {
+      const authorized = confirm(
+        "Do you own this video or have permission to download it?"
+      );
+
+      if (!authorized) return;
+
+      downloadButton.disabled = true;
+      downloadButton.textContent = "Preparing download...";
+
+      try {
+        const downloadResponse = await fetch("/api/video/download", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            url: parsedUrl.href,
+            format: "720p",
+            authorized: true
+          })
+        });
+
+        const downloadData = await downloadResponse.json();
+
+        if (!downloadResponse.ok || !downloadData.success) {
+          throw new Error(
+            downloadData.message || "Download could not be created."
+          );
+        }
+
+        const job = downloadData.job;
+
+        status.textContent =
+          "Download job created. Check its progress shortly.";
+
+        if (job.downloadUrl) {
+          const link = document.createElement("a");
+          link.href = job.downloadUrl;
+          link.textContent = "Download your video";
+          link.download = "";
+          link.style.display = "block";
+          link.style.marginTop = "15px";
+
+          resultLinks.appendChild(link);
+        } else if (job.id) {
+          status.textContent =
+            "Download job created. Job ID: " + job.id;
+        }
+
+      } catch (error) {
+        status.textContent = error.message;
+      } finally {
+        downloadButton.disabled = false;
+        downloadButton.textContent = "⬇ Download Video";
+      }
+    });
+
+    resultLinks.appendChild(downloadButton);
+
+    status.textContent = "Video information retrieved.";
 
   } catch (error) {
+    console.error("Vybemuse error:", error);
     status.textContent = error.message;
-    console.error("Vybemuse API error:", error);
 
   } finally {
     infoButton.disabled = false;
