@@ -588,38 +588,74 @@
     status.textContent = "Your music search is ready.";
   });
 
-  infoButton.addEventListener("click", function() {
-    const mediaUrl = urlInput.value.trim();
 
-    if (!mediaUrl) {
-      status.textContent = "Please paste a media URL first.";
-      return;
+infoButton.addEventListener("click", async function () {
+  const mediaUrl = urlInput.value.trim();
+
+  if (!mediaUrl) {
+    status.textContent = "Please paste a media URL first.";
+    return;
+  }
+
+  try {
+    const parsedUrl = new URL(mediaUrl);
+
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      throw new Error("Invalid media URL");
     }
 
-    try {
-      const parsedUrl = new URL(mediaUrl);
+    infoButton.disabled = true;
+    infoButton.textContent = "Searching...";
+    status.textContent = "Connecting to Vybemuse server...";
 
-      if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-        throw new Error("Invalid protocol");
-      }
+    const response = await fetch("/api/media", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        url: parsedUrl.href
+      })
+    });
 
-      showResults(
-        "Media link detected",
-        "The URL is valid. Open the original source to view the media. Downloads depend on the source's permissions.",
-        [
-          {
-            label: "Open Media Source",
-            url: parsedUrl.href
-          }
-        ]
-      );
+    const data = await response.json();
 
-      status.textContent = "Media URL checked successfully.";
-
-    } catch (error) {
-      status.textContent = "Please enter a valid HTTP or HTTPS URL.";
+    if (!response.ok) {
+      throw new Error(data.error || "Unable to retrieve media.");
     }
-  });
+
+    showResults(
+      data.title || "Media found",
+      data.message || "Your media is ready.",
+      []
+    );
+
+    // Show download button only when the backend provides
+    // an authorized download URL.
+    if (data.downloadUrl) {
+      const downloadButton = document.createElement("a");
+
+      downloadButton.href = data.downloadUrl;
+      downloadButton.textContent = "⬇ Download Media";
+      downloadButton.className = "primary";
+      downloadButton.style.display = "inline-block";
+      downloadButton.style.marginTop = "20px";
+
+      resultLinks.appendChild(downloadButton);
+    }
+
+    status.textContent = "Media request completed successfully.";
+
+  } catch (error) {
+    status.textContent = error.message;
+    console.error("Vybemuse API error:", error);
+
+  } finally {
+    infoButton.disabled = false;
+    infoButton.textContent = "Find Media";
+  }
+});
+
 </script>
 
 </body>
