@@ -270,7 +270,7 @@ async function getProviderJob(jobId) {
     `/v1/downloads/${encodeURIComponent(jobId)}`,
     {
       method: "GET",
-      timeoutMs: 30000
+      timeoutMs: 1200000
     }
   );
 
