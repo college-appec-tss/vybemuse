@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10291f">
 
-  <title>Vybemuse – Online Media Information & Download Tool</title>
-
-  <meta name="description" content="Use Vybemuse to retrieve supported media information, view available formats and prepare authorized media downloads in one simple online tool.">
-  <meta name="keywords" content="Vybemuse, online media tool, media information, video information, video format checker, media download tool, online video utility">
+  <title>Vybemuse – Short Video Information & Download Tool</title>
+  <meta name="description" content="Use Vybemuse to check supported YouTube Shorts, TikTok, Instagram Reels and Facebook video information, view available formats and prepare authorized downloads.">
+  <meta name="keywords" content="Vybemuse, YouTube Shorts information, TikTok video information, Instagram Reels information, Facebook Reels, short video tool, video format checker, online video utility">
   <meta name="author" content="Vybemuse">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="googlebot" content="index, follow">
@@ -19,18 +17,17 @@
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Vybemuse">
-  <meta property="og:title" content="Vybemuse – Simple Online Media Tools">
-  <meta property="og:description" content="Check supported media information, explore available formats and prepare authorized downloads with Vybemuse.">
+  <meta property="og:title" content="Vybemuse – Short Video Information & Download Tool">
+  <meta property="og:description" content="Check supported short-video information, review available formats and prepare authorized downloads with Vybemuse.">
   <meta property="og:url" content="https://vybemuse.onrender.com/">
   <meta property="og:locale" content="en_US">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Vybemuse – Simple Online Media Tools">
-  <meta name="twitter:description" content="A simple online tool for checking media information and preparing authorized downloads.">
+  <meta name="twitter:title" content="Vybemuse – Short Video Information & Download Tool">
+  <meta name="twitter:description" content="Check supported short-video information and available formats with Vybemuse.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script type="application/ld+json">
@@ -39,16 +36,8 @@
     "@type": "WebSite",
     "name": "Vybemuse",
     "url": "https://vybemuse.onrender.com/",
-    "description": "An online media utility for checking supported media information and preparing authorized media downloads.",
-    "inLanguage": "en",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://vybemuse.onrender.com/?url={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "description": "An online tool for checking supported short-video information and preparing authorized media downloads.",
+    "inLanguage": "en"
   }
   </script>
 
@@ -58,24 +47,18 @@
       --forest-light: #183a2b;
       --green: #24764b;
       --lime: #b9ed70;
-      --lime-dark: #8bc94c;
       --cream: #f4f5ed;
-      --white: #ffffff;
+      --white: #fff;
       --ink: #17241c;
       --muted: #718075;
       --border: #e2e8df;
-      --surface: #ffffff;
       --soft-green: #edf5e9;
       --max: 1160px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -85,25 +68,14 @@
       line-height: 1.6;
     }
 
-    button, input, select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
 
     .container {
       width: min(var(--max), calc(100% - 48px));
       margin: auto;
     }
-
-    /* NAVIGATION */
 
     .topbar {
       background: var(--forest);
@@ -142,9 +114,7 @@
       font-weight: 800;
     }
 
-    .brand-name span {
-      color: var(--lime);
-    }
+    .brand-name span { color: var(--lime); }
 
     .nav-links {
       display: flex;
@@ -155,9 +125,7 @@
       font-weight: 600;
     }
 
-    .nav-links a:hover {
-      color: var(--lime);
-    }
+    .nav-links a:hover { color: var(--lime); }
 
     .nav-action {
       background: var(--lime);
@@ -173,8 +141,6 @@
       background: white;
       transform: translateY(-2px);
     }
-
-    /* HERO */
 
     .hero {
       background: var(--forest);
@@ -193,9 +159,7 @@
       border-radius: 50%;
       right: -130px;
       top: -170px;
-      box-shadow:
-        0 0 0 55px #ffffff08,
-        0 0 0 110px #ffffff05;
+      box-shadow: 0 0 0 55px #ffffff08, 0 0 0 110px #ffffff05;
       pointer-events: none;
     }
 
@@ -224,12 +188,10 @@
       height: 8px;
       background: var(--lime);
       border-radius: 50%;
-      box-shadow: 0 0 13px #b9ed70;
+      box-shadow: 0 0 13px var(--lime);
     }
 
-    h1, h2, h3 {
-      font-family: "Manrope", sans-serif;
-    }
+    h1, h2, h3 { font-family: "Manrope", sans-serif; }
 
     h1 {
       max-width: 670px;
@@ -240,12 +202,10 @@
       font-weight: 800;
     }
 
-    h1 span {
-      color: var(--lime);
-    }
+    h1 span { color: var(--lime); }
 
     .hero-description {
-      max-width: 530px;
+      max-width: 550px;
       color: #c1d0c5;
       font-size: 16px;
       line-height: 1.9;
@@ -282,8 +242,6 @@
       color: #a8bcae;
       font-size: 12px;
     }
-
-    /* HERO VISUAL */
 
     .visual-panel {
       background: #ffffff0b;
@@ -396,7 +354,7 @@
       padding-top: 15px;
     }
 
-    /* MAIN TOOL */
+    /* URL TOOL */
 
     .main-content {
       padding: 0 0 80px;
@@ -407,12 +365,14 @@
 
     .tool-layout {
       display: grid;
-      grid-template-columns: 1fr 270px;
+      grid-template-columns: minmax(0, 1fr) 270px;
       gap: 20px;
       align-items: start;
     }
 
     .tool-card {
+      width: 100%;
+      min-width: 0;
       background: white;
       border: 1px solid var(--border);
       border-radius: 15px;
@@ -452,64 +412,67 @@
 
     .field-label {
       display: block;
-      margin-bottom: 9px;
+      margin-bottom: 10px;
       font-size: 12px;
       font-weight: 800;
       color: #39493d;
     }
 
+    /* Larger, full-width URL input area */
     .url-box {
+      width: 100%;
+      min-height: 76px;
       display: flex;
       align-items: center;
-      gap: 9px;
-      padding: 7px;
-      border: 1px solid #dbe5d9;
+      gap: 12px;
+      padding: 9px 10px 9px 15px;
+      border: 2px solid #dbe5d9;
       background: #f8faf6;
-      border-radius: 10px;
+      border-radius: 12px;
       transition: .2s;
     }
 
     .url-box:focus-within {
       border-color: var(--green);
-      box-shadow: 0 0 0 3px #24764b15;
+      box-shadow: 0 0 0 4px #24764b18;
+      background: white;
     }
 
     .url-icon {
-      padding-left: 10px;
+      flex-shrink: 0;
       color: var(--green);
-      font-size: 17px;
+      font-size: 22px;
     }
 
     .url-box input {
       flex: 1;
+      width: 100%;
       min-width: 0;
+      min-height: 54px;
       border: 0;
       outline: 0;
       background: transparent;
-      padding: 11px 3px;
+      padding: 12px 5px;
       color: var(--ink);
-      font-size: 13px;
+      font-size: 15px;
     }
 
-    .url-box input::placeholder {
-      color: #9aa79b;
-    }
+    .url-box input::placeholder { color: #9aa79b; }
 
     .primary-button {
+      min-height: 52px;
       border: 0;
-      border-radius: 8px;
-      padding: 13px 19px;
+      border-radius: 9px;
+      padding: 14px 22px;
       background: var(--green);
       color: white;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 800;
       white-space: nowrap;
       transition: .2s;
     }
 
-    .primary-button:hover {
-      background: var(--forest);
-    }
+    .primary-button:hover { background: var(--forest); }
 
     .primary-button:disabled {
       opacity: .55;
@@ -517,31 +480,54 @@
     }
 
     .status {
-      min-height: 24px;
-      margin-top: 13px;
-      font-size: 12px;
-      color: var(--green);
+      min-height: 0;
+      margin-top: 14px;
+      padding: 0;
+      font-size: 13px;
+      font-weight: 600;
       overflow-wrap: anywhere;
+    }
+
+    .status:not(:empty) {
+      padding: 11px 13px;
+      border-radius: 8px;
+    }
+
+    .status.processing {
+      color: #72520b;
+      background: #fff7df;
+      border: 1px solid #f2e2ae;
+    }
+
+    .status.success {
+      color: #17623b;
+      background: #eaf7ed;
+      border: 1px solid #cce8d2;
+    }
+
+    .status.error {
+      color: #a12c2c;
+      background: #fff0ef;
+      border: 1px solid #f1d0ce;
     }
 
     .result {
       display: none;
-      margin-top: 15px;
+      margin-top: 16px;
       background: #f8faf6;
       border: 1px solid var(--border);
       padding: 18px;
       border-radius: 11px;
     }
 
-    .result.show {
-      display: block;
-    }
+    .result.show { display: block; }
 
     .result strong {
       display: block;
       font-family: "Manrope", sans-serif;
       font-size: 17px;
       color: var(--forest);
+      overflow-wrap: anywhere;
     }
 
     .result p {
@@ -563,18 +549,17 @@
     .format {
       min-width: 125px;
       max-width: 190px;
-      padding: 12px;
+      min-height: 48px;
+      padding: 11px;
       border: 1px solid var(--border);
       background: white;
       border-radius: 8px;
       color: var(--ink);
       outline: none;
-      font-size: 12px;
+      font-size: 13px;
     }
 
-    .format:focus {
-      border-color: var(--green);
-    }
+    .format:focus { border-color: var(--green); }
 
     .controls {
       display: flex;
@@ -595,11 +580,10 @@
     .ready p {
       margin: 0 0 13px;
       color: #365440;
+      font-weight: 600;
     }
 
-    .ready a {
-      display: inline-block;
-    }
+    .ready a { display: inline-block; }
 
     .notice {
       margin-top: 17px;
@@ -658,16 +642,14 @@
       border-top: 1px solid #ffffff20;
       padding-top: 15px;
       margin-top: 6px;
-      color: #b9ed70;
+      color: var(--lime);
       font-size: 11px;
       font-weight: 700;
     }
 
-    /* INFORMATION SECTION */
+    /* SEO CONTENT */
 
-    .info-section {
-      padding: 35px 0 75px;
-    }
+    .info-section { padding: 35px 0 75px; }
 
     .section-kicker {
       color: var(--green);
@@ -678,7 +660,7 @@
     }
 
     .section-title {
-      max-width: 600px;
+      max-width: 680px;
       font-size: clamp(27px, 4vw, 39px);
       letter-spacing: -1.5px;
       line-height: 1.2;
@@ -686,7 +668,7 @@
     }
 
     .section-description {
-      max-width: 650px;
+      max-width: 720px;
       color: var(--muted);
       font-size: 14px;
       margin: 0;
@@ -718,16 +700,39 @@
       margin-bottom: 15px;
     }
 
-    .feature h3 {
-      font-size: 15px;
-      margin: 0 0 7px;
-    }
+    .feature h3 { font-size: 15px; margin: 0 0 7px; }
 
     .feature p {
       color: var(--muted);
       font-size: 12px;
       margin: 0;
       line-height: 1.8;
+    }
+
+    .platform-content {
+      margin-top: 38px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .platform-content article {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+
+    .platform-content h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+
+    .platform-content p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+      margin: 0;
     }
 
     /* FAQ */
@@ -750,10 +755,7 @@
       padding: 17px 20px;
     }
 
-    .faq-item h3 {
-      font-size: 14px;
-      margin: 0 0 7px;
-    }
+    .faq-item h3 { font-size: 14px; margin: 0 0 7px; }
 
     .faq-item p {
       margin: 0;
@@ -761,8 +763,6 @@
       color: var(--muted);
       line-height: 1.8;
     }
-
-    /* FOOTER */
 
     footer {
       background: var(--forest);
@@ -789,8 +789,6 @@
       font-size: 11px;
     }
 
-    /* RESPONSIVE */
-
     @media(max-width: 850px) {
       .hero-grid {
         grid-template-columns: 1fr;
@@ -802,9 +800,7 @@
         transform: none;
       }
 
-      .tool-layout {
-        grid-template-columns: 1fr;
-      }
+      .tool-layout { grid-template-columns: 1fr; }
 
       .side-card {
         display: grid;
@@ -813,65 +809,35 @@
       }
 
       .side-card h3,
-      .side-bottom {
-        grid-column: 1 / -1;
-      }
+      .side-bottom { grid-column: 1 / -1; }
 
-      .side-item {
-        margin: 0;
-      }
+      .side-item { margin: 0; }
     }
 
     @media(max-width: 650px) {
-      .container {
-        width: min(100% - 30px, var(--max));
-      }
+      .container { width: min(100% - 30px, var(--max)); }
 
-      .nav {
-        min-height: 68px;
-      }
-
-      .brand {
-        font-size: 20px;
-      }
-
-      .nav-links {
-        display: none;
-      }
+      .nav { min-height: 68px; }
+      .brand { font-size: 20px; }
+      .nav-links { display: none; }
 
       .nav-action {
         padding: 10px 12px;
         font-size: 11px;
       }
 
-      .hero {
-        padding: 58px 0 78px;
-      }
+      .hero { padding: 58px 0 78px; }
 
       h1 {
         font-size: clamp(42px, 12vw, 58px);
         letter-spacing: -2.8px;
       }
 
-      .hero-description {
-        font-size: 14px;
-      }
-
-      .visual-panel {
-        padding: 17px;
-      }
-
-      .visual-cover {
-        min-height: 135px;
-      }
-
-      .main-content {
-        margin-top: -28px;
-      }
-
-      .tool-card {
-        padding: 20px;
-      }
+      .hero-description { font-size: 14px; }
+      .visual-panel { padding: 17px; }
+      .visual-cover { min-height: 135px; }
+      .main-content { margin-top: -28px; }
+      .tool-card { padding: 20px; }
 
       .tool-heading {
         flex-direction: column;
@@ -879,42 +845,33 @@
       }
 
       .url-box {
-        flex-wrap: wrap;
-        padding: 8px;
+        min-height: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 7px;
+        padding: 10px;
       }
 
-      .url-icon {
-        display: none;
-      }
+      .url-icon { display: none; }
 
       .url-box input {
-        flex-basis: 100%;
-        padding: 12px 8px;
+        flex: none;
+        width: 100%;
+        min-height: 58px;
+        padding: 13px 10px;
+        font-size: 15px;
       }
 
       .url-box .primary-button {
         width: 100%;
+        min-height: 54px;
       }
 
-      .side-card {
-        display: block;
-      }
-
-      .side-item {
-        margin-bottom: 17px;
-      }
-
-      .features {
-        grid-template-columns: 1fr;
-      }
-
-      .info-section {
-        padding: 30px 0 55px;
-      }
-
-      .faq-section {
-        padding: 50px 0;
-      }
+      .side-card { display: block; }
+      .side-item { margin-bottom: 17px; }
+      .features, .platform-content { grid-template-columns: 1fr; }
+      .info-section { padding: 30px 0 55px; }
+      .faq-section { padding: 50px 0; }
 
       .footer-inner {
         align-items: flex-start;
@@ -923,13 +880,8 @@
     }
 
     @media(prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
-      *, *::before, *::after {
-        transition: none !important;
-      }
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
     }
   </style>
 </head>
@@ -938,60 +890,55 @@
 
 <header class="topbar">
   <div class="container nav">
-
     <a href="/" class="brand" aria-label="Vybemuse home">
       <span class="brand-mark">V</span>
       <span class="brand-name">vybe<span>muse</span></span>
     </a>
 
     <nav class="nav-links" aria-label="Main navigation">
-      <a href="#tool">Media tool</a>
+      <a href="#tool">Video tool</a>
       <a href="#features">Features</a>
-      <a href="#how-it-works">How it works</a>
+      <a href="#platforms">Platforms</a>
       <a href="#faq">FAQ</a>
     </nav>
 
     <a href="#tool" class="nav-action">Try Vybemuse ↗</a>
-
   </div>
 </header>
 
 <main>
 
-  <!-- HERO -->
-
   <section class="hero">
     <div class="container hero-grid">
-
       <div>
         <div class="eyebrow">
           <span class="eyebrow-dot"></span>
-          YOUR MEDIA, MADE SIMPLE
+          SHORT VIDEO TOOLS
         </div>
 
         <h1>
-          Less searching.<br>
-          More <span>creating.</span>
+          Your short videos.<br>
+          <span>One simple tool.</span>
         </h1>
 
         <p class="hero-description">
-          A simpler way to check supported media information, explore available formats and prepare authorized downloads. Everything starts with one link.
+          Check supported short-video information, review available formats
+          and prepare authorized downloads. Start by pasting a video link
+          into the Vybemuse tool.
         </p>
 
         <div class="hero-bottom">
           <a href="#tool" class="hero-button">
-            Explore the tool <span>→</span>
+            Check a video <span>→</span>
           </a>
-
           <span class="hero-note">Simple · Clear · Convenient</span>
         </div>
       </div>
 
       <div class="visual-panel" aria-hidden="true">
-
         <div class="visual-top">
-          <span class="visual-label">VYBEMUSE MEDIA SPACE</span>
-          <span class="live-label">MEDIA TOOLS</span>
+          <span class="visual-label">VYBEMUSE VIDEO SPACE</span>
+          <span class="live-label">VIDEO TOOLS</span>
         </div>
 
         <div class="visual-cover">
@@ -1005,35 +952,26 @@
 
         <div class="visual-footer">
           <span>One link. One simple process.</span>
-          <span>VYBEMUSE ©</span>
+          <span>VYBEMUSE</span>
         </div>
-
       </div>
-
     </div>
   </section>
 
-  <!-- MEDIA TOOL -->
-
   <section class="main-content" id="tool">
     <div class="container">
-
       <div class="tool-layout">
 
         <div class="tool-card">
-
           <div class="tool-heading">
             <div>
-              <h2>Start with a media link</h2>
-              <p>Paste a supported HTTPS URL to retrieve its information.</p>
+              <h2>Paste your short-video URL</h2>
+              <p>Enter a supported video link to retrieve its information.</p>
             </div>
-
             <span class="secure-tag">● SIMPLE PROCESS</span>
           </div>
 
-          <label class="field-label" for="mediaUrl">
-            MEDIA URL
-          </label>
+          <label class="field-label" for="mediaUrl">VIDEO URL</label>
 
           <div class="url-box">
             <span class="url-icon" aria-hidden="true">↗</span>
@@ -1041,111 +979,93 @@
             <input
               id="mediaUrl"
               type="url"
-              placeholder="https://example.com/media..."
-              aria-label="Paste media URL"
+              placeholder="Paste your video link here..."
+              aria-label="Paste short-video URL"
               autocomplete="url"
               maxlength="2048"
             >
 
             <button class="primary-button" id="findMedia" type="button">
-              Check media →
+              Check video →
             </button>
           </div>
 
-          <div
-            id="mediaStatus"
-            class="status"
-            role="status"
-            aria-live="polite"
-          ></div>
-
-          <div
-            id="mediaResult"
-            class="result"
-            aria-live="polite"
-          ></div>
+          <div id="mediaStatus" class="status" role="status" aria-live="polite"></div>
+          <div id="mediaResult" class="result" aria-live="polite"></div>
 
           <p class="notice">
-            Only download media you own or have permission to download.
-            Available formats depend on the source provider.
+            Only download videos you own or have permission to download.
+            Supported formats depend on the source provider.
           </p>
-
         </div>
 
-        <!-- SIDE INSTRUCTIONS -->
-
-        <aside class="side-card" id="how-it-works">
-
+        <aside class="side-card">
           <h3>How Vybemuse works</h3>
 
           <div class="side-item">
             <span class="side-number">01</span>
             <div>
-              <b>Paste a link</b>
-              <p>Copy a supported media URL and enter it above.</p>
+              <b>Paste a video link</b>
+              <p>Copy a supported video URL and enter it above.</p>
             </div>
           </div>
 
           <div class="side-item">
             <span class="side-number">02</span>
             <div>
-              <b>Check information</b>
-              <p>Wait while Vybemuse requests the available media details.</p>
+              <b>Check video information</b>
+              <p>Wait while Vybemuse requests the available details.</p>
             </div>
           </div>
 
           <div class="side-item">
             <span class="side-number">03</span>
             <div>
-              <b>Prepare your file</b>
-              <p>Select an available format and prepare your authorized download.</p>
+              <b>Prepare your download</b>
+              <p>Select an available format and prepare your authorized file.</p>
             </div>
           </div>
 
           <div class="side-bottom">
-            Designed to keep the process straightforward.
+            A straightforward video-link process.
           </div>
-
         </aside>
 
       </div>
     </div>
   </section>
 
-  <!-- FEATURES -->
-
   <section class="info-section" id="features">
     <div class="container">
-
       <span class="section-kicker">WHY VYBEMUSE</span>
 
       <h2 class="section-title">
-        Useful media tools without unnecessary complexity.
+        A simple online tool for supported short videos.
       </h2>
 
       <p class="section-description">
-        Vybemuse brings the essential steps together in a clear interface.
-        You can check media information, review supported formats and follow
-        your download progress from one place.
+        Vybemuse brings video information and download preparation together
+        in one clear interface. Paste a supported link, check the information
+        returned by the provider, and review the available formats before
+        creating a download job.
       </p>
 
       <div class="features">
-
         <article class="feature">
           <div class="feature-icon" aria-hidden="true">↗</div>
-          <h3>Simple link input</h3>
+          <h3>Easy video URL input</h3>
           <p>
-            Start by pasting a supported media URL instead of navigating
-            through complicated options.
+            Start by pasting a supported video link into a large, easy-to-see
+            input field.
           </p>
         </article>
 
         <article class="feature">
           <div class="feature-icon" aria-hidden="true">◷</div>
-          <h3>Media information</h3>
+          <h3>Video information</h3>
           <p>
-            Retrieve the information returned by the provider, including
-            supported title, duration and thumbnail details.
+            Retrieve available details such as the title, duration,
+            creator information and thumbnail when supplied by the provider.
           </p>
         </article>
 
@@ -1153,95 +1073,137 @@
           <div class="feature-icon" aria-hidden="true">↓</div>
           <h3>Available formats</h3>
           <p>
-            Review the formats actually returned by the provider before
-            creating a download job.
+            Review formats actually returned by the provider before
+            preparing your download.
+          </p>
+        </article>
+      </div>
+
+      <div class="platform-content" id="platforms">
+        <article>
+          <h3>YouTube Shorts information</h3>
+          <p>
+            Use a supported YouTube video URL to request its available
+            information. Vybemuse displays details returned by the provider
+            when the link can be processed.
           </p>
         </article>
 
+        <article>
+          <h3>TikTok video information</h3>
+          <p>
+            Submit a supported TikTok video link to check the information
+            returned by the media provider and review available formats.
+          </p>
+        </article>
+
+        <article>
+          <h3>Instagram Reels information</h3>
+          <p>
+            Enter a supported Instagram video or Reels URL. Availability
+            depends on whether the provider can access and process the link.
+          </p>
+        </article>
+
+        <article>
+          <h3>Facebook video information</h3>
+          <p>
+            Check supported Facebook video links, including eligible Reels
+            URLs, subject to provider availability and access restrictions.
+          </p>
+        </article>
       </div>
     </div>
   </section>
-
-  <!-- FAQ -->
 
   <section class="faq-section" id="faq">
     <div class="container">
-
       <span class="section-kicker">HELP CENTER</span>
-
       <h2 class="section-title">Frequently asked questions</h2>
 
       <p class="section-description">
-        Learn the basics of using the Vybemuse media tool.
+        Learn how to use the Vybemuse short-video information tool.
       </p>
 
       <div class="faq-list">
-
         <article class="faq-item">
           <h3>What is Vybemuse?</h3>
           <p>
-            Vybemuse is an online media utility that helps users retrieve
-            supported media information and prepare authorized media downloads.
+            Vybemuse is an online media utility that requests information
+            for supported video links and helps prepare authorized downloads.
           </p>
         </article>
 
         <article class="faq-item">
-          <h3>How do I use Vybemuse?</h3>
+          <h3>Which video platforms are supported?</h3>
           <p>
-            Paste a supported HTTPS media URL into the input field, select
-            Check media, wait for the information request, and review the
-            formats returned by the provider.
+            The current server accepts links from YouTube, TikTok, Instagram,
+            Facebook and Vimeo. Whether a particular video can be processed
+            depends on the media provider.
           </p>
         </article>
 
         <article class="faq-item">
-          <h3>Why does checking media sometimes take longer?</h3>
+          <h3>How do I check a video?</h3>
           <p>
-            Retrieving media information depends on the source provider and
-            network response. Some requests may take longer than others.
+            Paste a supported HTTPS video URL into the input field and select
+            Check video. Wait for the provider to return the available
+            information.
           </p>
         </article>
 
         <article class="faq-item">
-          <h3>Can I choose any download format?</h3>
+          <h3>Why can checking a video take longer?</h3>
           <p>
-            No. Vybemuse displays formats returned by the provider.
-            The available options depend on the source media.
+            Processing time depends on the source platform, provider response
+            and network conditions. Some requests may take longer than others.
           </p>
         </article>
 
         <article class="faq-item">
-          <h3>Can I download any media URL?</h3>
+          <h3>Can I choose any video quality?</h3>
           <p>
-            Not necessarily. Only supported sources can be processed.
-            You should only download media you own or have permission to use.
+            No. Vybemuse displays only the formats returned by the provider.
+            Available options vary depending on the source video.
           </p>
         </article>
 
+        <article class="faq-item">
+          <h3>Can I download any video?</h3>
+          <p>
+            No. Only supported sources can be processed. You should only
+            download videos you own or have permission to download, and
+            respect the source platform's terms and applicable law.
+          </p>
+        </article>
+
+        <article class="faq-item">
+          <h3>Does Vybemuse guarantee every link will work?</h3>
+          <p>
+            No. Private, restricted, unavailable or unsupported videos may
+            not be processed. Results depend on the source and provider.
+          </p>
+        </article>
       </div>
     </div>
   </section>
-
 </main>
 
 <footer>
   <div class="container footer-inner">
-
     <div>
       <a href="/" class="brand">
         <span class="brand-mark">V</span>
         <span class="brand-name">vybe<span>muse</span></span>
       </a>
-
       <div class="footer-description">
-        A simpler space for supported media tools.
+        A simpler space for supported video tools.
       </div>
     </div>
 
     <div class="copyright">
       © <span id="year"></span> Vybemuse. All rights reserved.
     </div>
-
   </div>
 </footer>
 
@@ -1253,6 +1215,17 @@
   let activeJob = null;
   let pollTimer = null;
 
+  function setStatus(message, type = "processing") {
+    const status = $("mediaStatus");
+
+    status.textContent = message;
+    status.className = "status";
+
+    if (message) {
+      status.classList.add(type);
+    }
+  }
+
   function safeHttpsUrl(value) {
     try {
       const url = new URL(value);
@@ -1260,7 +1233,6 @@
       return url.protocol === "https:"
         ? url.href
         : null;
-
     } catch {
       return null;
     }
@@ -1295,10 +1267,7 @@
 
     const formats = Array.isArray(raw)
       ? raw.map((item) => {
-
-          if (typeof item === "string") {
-            return item;
-          }
+          if (typeof item === "string") return item;
 
           return item?.format ||
             item?.quality ||
@@ -1306,7 +1275,6 @@
             (item?.height ? `${item.height}p` : "") ||
             item?.id ||
             "";
-
         }).filter(Boolean)
       : [];
 
@@ -1326,14 +1294,12 @@
     box.replaceChildren();
 
     const title = document.createElement("strong");
-
     title.textContent =
       video.title ||
       video.name ||
-      "Media information retrieved";
+      "Video information retrieved";
 
     const details = document.createElement("p");
-
     const detailsParts = [];
 
     if (video.duration) {
@@ -1369,7 +1335,7 @@
       const image = document.createElement("img");
 
       image.src = thumbnailUrl;
-      image.alt = "Media thumbnail";
+      image.alt = "Video thumbnail";
       image.loading = "lazy";
       image.referrerPolicy = "no-referrer";
 
@@ -1382,20 +1348,17 @@
       const unavailable = document.createElement("p");
 
       unavailable.textContent =
-        "The provider did not return a list of available formats for this link.";
+        "The provider did not return available download formats for this link.";
 
       box.append(unavailable);
       box.classList.add("show");
-
       return;
     }
 
     const controls = document.createElement("div");
-
     controls.className = "controls";
 
     const format = document.createElement("select");
-
     format.className = "format";
     format.setAttribute("aria-label", "Output format");
 
@@ -1409,7 +1372,6 @@
     });
 
     const download = document.createElement("button");
-
     download.className = "primary-button";
     download.type = "button";
     download.textContent = "Create download →";
@@ -1419,19 +1381,19 @@
     );
 
     controls.append(format, download);
-
     box.append(controls);
     box.classList.add("show");
   }
 
   async function findMediaInfo(url, button) {
-    const status = $("mediaStatus");
     const started = Date.now();
 
     button.disabled = true;
 
-    status.textContent =
-      "Contacting the media source… This can take up to 10 minutes.";
+    setStatus(
+      "Checking your video link… This can take up to 10 minutes.",
+      "processing"
+    );
 
     $("mediaResult").classList.remove("show");
     $("mediaResult").replaceChildren();
@@ -1439,29 +1401,22 @@
     try {
       const response = await fetch("/api/video/info", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url })
       });
 
       const taskData = await readJson(response);
 
-      if (
-        !response.ok ||
-        !taskData.success ||
-        !taskData.taskId
-      ) {
+      if (!response.ok || !taskData.success || !taskData.taskId) {
         throw new Error(
           taskData.message ||
-          "Unable to start media information check."
+          "Unable to start the video information check."
         );
       }
 
       const taskId = taskData.taskId;
 
       while (Date.now() - started < INFO_MAX_WAIT) {
-
         await new Promise((resolve) => {
           pollTimer = window.setTimeout(resolve, 4000);
         });
@@ -1485,10 +1440,10 @@
         ) {
           showMediaInfo(result.task.video);
 
-          status.textContent =
-            `Media information retrieved in ${
-              Math.ceil((Date.now() - started) / 1000)
-            } seconds.`;
+          setStatus(
+            "Success! Video information was retrieved. Review the details and available formats below.",
+            "success"
+          );
 
           return;
         }
@@ -1507,8 +1462,10 @@
           (Date.now() - started) / 1000
         );
 
-        status.textContent =
-          `Still checking the source… ${elapsedSeconds}s elapsed. Please keep this page open.`;
+        setStatus(
+          `Still checking the video… ${elapsedSeconds}s elapsed. Please keep this page open.`,
+          "processing"
+        );
       }
 
       throw new Error(
@@ -1516,56 +1473,42 @@
       );
 
     } catch (error) {
-
-      status.textContent = error.message;
-
+      setStatus(error.message, "error");
     } finally {
-
       button.disabled = false;
-
     }
   }
 
   async function createDownload(format, button) {
-
     if (activeJob) {
-      $("mediaStatus").textContent =
-        "A download job is already being processed. Please wait.";
-
+      setStatus(
+        "A download job is already being processed. Please wait.",
+        "processing"
+      );
       return;
     }
 
-    const url = safeHttpsUrl(
-      $("mediaUrl").value.trim()
-    );
+    const url = safeHttpsUrl($("mediaUrl").value.trim());
 
     if (!url) {
-      $("mediaStatus").textContent =
-        "Enter a valid HTTPS media URL first.";
-
+      setStatus("Enter a valid HTTPS video URL first.", "error");
       return;
     }
 
     const confirmed = window.confirm(
-      "Confirm that you own this media or have permission to download it."
+      "Confirm that you own this video or have permission to download it."
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     button.disabled = true;
 
-    $("mediaStatus").textContent =
-      "Creating your download job…";
+    setStatus("Creating your download job…", "processing");
 
     try {
-
       const response = await fetch("/api/video/download", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url,
           format,
@@ -1575,11 +1518,7 @@
 
       const data = await readJson(response);
 
-      if (
-        !response.ok ||
-        !data.success ||
-        !data.job?.id
-      ) {
+      if (!response.ok || !data.success || !data.job?.id) {
         throw new Error(
           data.message ||
           "Could not create the download job."
@@ -1588,87 +1527,70 @@
 
       activeJob = data.job.id;
 
-      $("mediaStatus").textContent =
-        "Your file is being prepared. Keep this page open.";
+      setStatus(
+        "Your download job has been created. Preparing your file…",
+        "processing"
+      );
 
       pollJob(activeJob, button);
 
     } catch (error) {
-
-      $("mediaStatus").textContent = error.message;
-
+      setStatus(error.message, "error");
       button.disabled = false;
-
     }
   }
 
   function showDownloadButton(jobId, button) {
-
     const box = $("mediaResult");
-
     const old = document.getElementById("readyDownload");
 
-    if (old) {
-      old.remove();
-    }
+    if (old) old.remove();
 
     const area = document.createElement("div");
-
     area.id = "readyDownload";
     area.className = "ready";
 
     const message = document.createElement("p");
-
     message.textContent =
-      "Your file is ready. Download it directly from Vybemuse without opening another website.";
+      "Success! Your file is ready. Select the button below to download it through Vybemuse.";
 
     const link = document.createElement("a");
-
     link.className = "primary-button";
-
-    link.href =
-      `/api/video/file/${encodeURIComponent(jobId)}`;
-
+    link.href = `/api/video/file/${encodeURIComponent(jobId)}`;
     link.textContent = "↓ Download file";
     link.setAttribute("download", "");
 
     link.addEventListener("click", () => {
-
-      $("mediaStatus").textContent =
-        "Your download is starting. Vybemuse will remain open.";
+      setStatus(
+        "Your download has started. The file is being transferred through Vybemuse.",
+        "success"
+      );
 
       button.disabled = false;
-
     });
 
     area.append(message, link);
-
     box.append(area);
-
     box.classList.add("show");
   }
 
   async function pollJob(jobId, button) {
-
     const started = Date.now();
-
     const maxWait = 10 * 60 * 1000;
 
     const check = async () => {
-
       if (Date.now() - started > maxWait) {
-
-        $("mediaStatus").textContent =
-          "The download is taking longer than 10 minutes. You can try again later.";
+        setStatus(
+          "The download is taking longer than 10 minutes. Please try again later.",
+          "error"
+        );
 
         activeJob = null;
         button.disabled = false;
-
         return;
       }
 
       try {
-
         const response = await fetch(
           `/api/video/status/${encodeURIComponent(jobId)}`
         );
@@ -1683,62 +1605,59 @@
         }
 
         const job = data.job || {};
-
-        const status = String(
-          job.status || "unknown"
-        ).toLowerCase();
+        const status = String(job.status || "unknown").toLowerCase();
 
         if (
           ["completed", "complete", "succeeded", "success"].includes(status)
         ) {
-
           if (!job.downloadReady) {
-
-            $("mediaStatus").textContent =
-              "The provider completed the job but has not supplied a downloadable file.";
+            setStatus(
+              "The provider completed the job but has not supplied a downloadable file.",
+              "error"
+            );
 
             activeJob = null;
             button.disabled = false;
-
             return;
           }
 
-          $("mediaStatus").textContent =
-            "Your file is ready.";
+          setStatus(
+            "Success! Your video has been processed and is ready to download.",
+            "success"
+          );
 
           showDownloadButton(jobId, button);
-
           activeJob = null;
-
           return;
         }
 
         if (
           ["failed", "error", "cancelled", "canceled"].includes(status)
         ) {
-
-          $("mediaStatus").textContent =
-            job.message ||
-            `The provider reported that the job ${status}.`;
+          setStatus(
+            job.message || `The provider reported that the job ${status}.`,
+            "error"
+          );
 
           activeJob = null;
           button.disabled = false;
-
           return;
         }
 
-        $("mediaStatus").textContent =
-          `Preparing your file: ${status}. Please keep this page open.`;
+        setStatus(
+          `Preparing your file: ${status}. Please keep this page open.`,
+          "processing"
+        );
 
         pollTimer = window.setTimeout(check, 4000);
 
       } catch (error) {
-
-        $("mediaStatus").textContent =
-          `${error.message} Retrying shortly…`;
+        setStatus(
+          `${error.message} Retrying shortly…`,
+          "error"
+        );
 
         pollTimer = window.setTimeout(check, 5000);
-
       }
     };
 
@@ -1746,45 +1665,32 @@
   }
 
   $("findMedia").addEventListener("click", () => {
-
-    const url = safeHttpsUrl(
-      $("mediaUrl").value.trim()
-    );
+    const url = safeHttpsUrl($("mediaUrl").value.trim());
 
     if (!url) {
-
-      $("mediaStatus").textContent =
-        "Paste a valid HTTPS media URL first.";
-
+      setStatus("Paste a valid HTTPS video URL first.", "error");
       return;
     }
 
     findMediaInfo(url, $("findMedia"));
-
   });
 
   $("mediaUrl").addEventListener("keydown", (event) => {
-
     if (event.key === "Enter") {
       event.preventDefault();
       $("findMedia").click();
     }
-
   });
 
-  // Allow a URL supplied through the query string.
   const queryUrl = new URLSearchParams(
     window.location.search
   ).get("url");
 
   if (queryUrl) {
-
     $("mediaUrl").value = queryUrl;
-
   }
 
   $("year").textContent = new Date().getFullYear();
-
 </script>
 
 </body>
