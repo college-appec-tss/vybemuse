@@ -202,7 +202,7 @@ async function vidfetch(endpoint, {
       const error = new Error(
         publicErrorMessage(
           data.message || data.error || data.detail,
-          `Media provider returned HTTP ${response.status}.`
+          `videos returned ${response.status}  may be it is not a short video.`
         )
       );
 
