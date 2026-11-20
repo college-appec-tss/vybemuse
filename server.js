@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -15,16 +14,14 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const VIDFETCH_API = "https://api.vidfetch.dev";
 const VIDFETCH_API_KEY = process.env.VIDFETCH_API_KEY;
+
 const SITE_URL = (
   process.env.SITE_URL || "https://vybemuse.onrender.com"
 ).replace(/\/+$/, "");
 
 const MAX_FILE_BYTES = 512 * 1024 * 1024;
-
-// 10 MINUTES
 const INFO_TIMEOUT_MS = 10 * 60 * 1000;
 
-// Background information tasks
 const infoTasks = new Map();
 
 app.disable("x-powered-by");
@@ -59,7 +56,7 @@ app.use(helmet({
 
 app.use(express.json({ limit: "12kb" }));
 
-// Allow frontend polling during the 10-minute process.
+// API rate limiting
 app.use("/api", rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 500,
@@ -83,22 +80,30 @@ const allowedFormats = new Set([
   "mp3"
 ]);
 
-const supportedHosts = new Set([
+// Exact domains and their legitimate subdomains.
+const supportedDomains = [
   "youtube.com",
-  "www.youtube.com",
-  "m.youtube.com",
-  "youtu.be",
   "tiktok.com",
-  "www.tiktok.com",
-  "vm.tiktok.com",
   "facebook.com",
-  "www.facebook.com",
-  "fb.watch",
   "instagram.com",
-  "www.instagram.com",
-  "vimeo.com",
-  "www.vimeo.com"
+  "vimeo.com"
+];
+
+// These short domains are accepted exactly.
+const supportedExactHosts = new Set([
+  "youtu.be",
+  "fb.watch"
 ]);
+
+function isSupportedHost(hostname) {
+  if (supportedExactHosts.has(hostname)) {
+    return true;
+  }
+
+  return supportedDomains.some((domain) =>
+    hostname === domain || hostname.endsWith(`.${domain}`)
+  );
+}
 
 function validateVideoUrl(value) {
   if (typeof value !== "string" || value.length > 2048) {
@@ -110,12 +115,14 @@ function validateVideoUrl(value) {
     const hostname = parsed.hostname.toLowerCase();
 
     if (parsed.protocol !== "https:") return null;
-    if (!supportedHosts.has(hostname)) return null;
+    if (!isSupportedHost(hostname)) return null;
+
     if (parsed.username || parsed.password || parsed.port) {
       return null;
     }
 
     return parsed.href;
+
   } catch {
     return null;
   }
@@ -127,6 +134,7 @@ function publicErrorMessage(message, fallback) {
   return safe && safe.length < 300 ? safe : fallback;
 }
 
+// VIDFETCH REQUEST
 async function vidfetch(endpoint, {
   method = "GET",
   body,
@@ -290,6 +298,7 @@ function validateProviderDownloadUrl(value) {
     const url = new URL(value);
 
     if (url.protocol !== "https:") return null;
+
     if (url.username || url.password || url.port) {
       return null;
     }
@@ -326,7 +335,6 @@ function safeFilename(value, extension) {
 }
 
 // WEBSITE
-
 app.get("/", (_req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -343,7 +351,6 @@ app.use(express.static(__dirname, {
 }));
 
 // SEO
-
 app.get("/robots.txt", (_req, res) => {
   res.type("text/plain").send(
     `User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${SITE_URL}/sitemap.xml\n`
@@ -364,7 +371,6 @@ app.get("/sitemap.xml", (_req, res) => {
 });
 
 // HEALTH
-
 app.get("/api/health", (_req, res) => {
   res.json({
     success: true,
@@ -375,11 +381,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 // MEDIA INFORMATION
-// Start a background task so the browser does not need to
-// keep its original HTTP request open for 10 minutes.
-
 app.post("/api/video/info", (req, res) => {
-
   const url = validateVideoUrl(req.body?.url);
 
   if (!url) {
@@ -406,10 +408,9 @@ app.post("/api/video/info", (req, res) => {
     message: null
   });
 
-  // Run provider request in the background.
+  // Run the provider request in the background.
   (async () => {
     try {
-
       const data = await vidfetch("/v1/info", {
         method: "POST",
         body: { url },
@@ -433,7 +434,6 @@ app.post("/api/video/info", (req, res) => {
       console.log(`[Info task] ${taskId} completed`);
 
     } catch (error) {
-
       console.error("[VidFetch info task]", error.message);
 
       infoTasks.set(taskId, {
@@ -464,9 +464,7 @@ app.post("/api/video/info", (req, res) => {
 });
 
 // INFORMATION TASK STATUS
-
 app.get("/api/video/info/status/:id", (req, res) => {
-
   const taskId = req.params.id;
 
   if (!/^info_[a-f0-9]{32}$/.test(taskId)) {
@@ -514,9 +512,7 @@ app.get("/api/video/info/status/:id", (req, res) => {
 });
 
 // CREATE DOWNLOAD JOB
-
 app.post("/api/video/download", async (req, res) => {
-
   const url = validateVideoUrl(req.body?.url);
 
   const format = typeof req.body?.format === "string"
@@ -545,7 +541,6 @@ app.post("/api/video/download", async (req, res) => {
   }
 
   try {
-
     const data = await vidfetch("/v1/downloads", {
       method: "POST",
 
@@ -564,7 +559,6 @@ app.post("/api/video/download", async (req, res) => {
       typeof job.id !== "string" ||
       !/^dl_[a-zA-Z0-9_-]{4,100}$/.test(job.id)
     ) {
-
       console.error(
         "[VidFetch] unexpected create-job response:",
         JSON.stringify(data).slice(0, 1000)
@@ -587,7 +581,6 @@ app.post("/api/video/download", async (req, res) => {
     });
 
   } catch (error) {
-
     return sendApiError(
       res,
       error,
@@ -597,9 +590,7 @@ app.post("/api/video/download", async (req, res) => {
 });
 
 // DOWNLOAD STATUS
-
 app.get("/api/video/status/:id", async (req, res) => {
-
   const jobId = req.params.id;
 
   if (!/^dl_[a-zA-Z0-9_-]{4,100}$/.test(jobId)) {
@@ -610,7 +601,6 @@ app.get("/api/video/status/:id", async (req, res) => {
   }
 
   try {
-
     const job = await getProviderJob(jobId);
 
     const status = String(
@@ -634,7 +624,6 @@ app.get("/api/video/status/:id", async (req, res) => {
     });
 
   } catch (error) {
-
     return sendApiError(
       res,
       error,
@@ -644,9 +633,7 @@ app.get("/api/video/status/:id", async (req, res) => {
 });
 
 // STREAM FILE THROUGH VYBEMUSE
-
 app.get("/api/video/file/:id", async (req, res) => {
-
   const jobId = req.params.id;
 
   if (!/^dl_[a-zA-Z0-9_-]{4,100}$/.test(jobId)) {
@@ -656,7 +643,6 @@ app.get("/api/video/file/:id", async (req, res) => {
   let controller;
 
   try {
-
     const job = await getProviderJob(jobId);
 
     const status = String(
@@ -761,7 +747,6 @@ app.get("/api/video/file/:id", async (req, res) => {
 
     const byteLimit = new Transform({
       transform(chunk, _encoding, callback) {
-
         bytesSent += chunk.length;
 
         if (bytesSent > MAX_FILE_BYTES) {
@@ -781,7 +766,6 @@ app.get("/api/video/file/:id", async (req, res) => {
     }, 10 * 60 * 1000);
 
     try {
-
       await pipeline(
         Readable.fromWeb(upstream.body),
         byteLimit,
@@ -800,7 +784,6 @@ app.get("/api/video/file/:id", async (req, res) => {
     );
 
   } catch (error) {
-
     if (!res.headersSent) {
       console.error("[Download stream error]", error.message);
 
@@ -819,7 +802,6 @@ app.get("/api/video/file/:id", async (req, res) => {
 });
 
 // UNKNOWN API ROUTE
-
 app.use("/api", (_req, res) => {
   res.status(404).json({
     success: false,
@@ -828,9 +810,7 @@ app.use("/api", (_req, res) => {
 });
 
 // ERROR HANDLER
-
 app.use((error, _req, res, _next) => {
-
   if (
     error instanceof SyntaxError &&
     error.status === 400 &&
@@ -851,9 +831,7 @@ app.use((error, _req, res, _next) => {
 });
 
 // START SERVER
-
 app.listen(PORT, () => {
-
   console.log(
     `Vybemuse server listening on port ${PORT}`
   );
